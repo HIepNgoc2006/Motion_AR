@@ -1,0 +1,176 @@
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  .gitignore — Motion AR (Unity + Python Hybrid Project)           ║
+# ║  Mục đích: Loại trừ các file tạm, build, thư viện, và dữ liệu   ║
+# ║            lớn không cần thiết cho version control.               ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+# ═══════════════════════════════════════════════════════════════════════
+# 1. UNITY — File tạm và build của Unity Editor
+# ═══════════════════════════════════════════════════════════════════════
+
+# Library: Cache nội bộ Unity (Asset DB, Shader cache, Thumbnail...)
+# → Tự sinh lại khi mở project, dung lượng rất lớn (hàng GB)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]serSettings/
+
+# MemoryCaptures: Debug captures từ Unity Profiler
+[Mm]emoryCaptures/
+
+# Recordings: Video recordings từ Unity Recorder
+[Rr]ecordings/
+
+# Asset meta files cho thư mục (không cần nếu dùng Visible Meta Files)
+# Giữ lại .meta cho files — Unity cần chúng để track GUIDs
+
+# Unity auto-generated files
+*.pidb
+*.unityproj
+*.sln
+*.csproj
+*.userprefs
+*.suo
+sysinfo.txt
+
+# Unity build outputs
+*.apk
+*.aab
+*.ipa
+*.exe
+*.app
+*.x86
+*.x86_64
+
+# Crashlytics
+crashlytics-build.properties
+
+# ═══════════════════════════════════════════════════════════════════════
+# 2. PYTHON — Cache, môi trường ảo, và bytecode
+# ═══════════════════════════════════════════════════════════════════════
+
+# __pycache__: Bytecode Python biên dịch (.pyc)
+# → Tự sinh khi import module, không mang tính di động
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Môi trường ảo — chứa toàn bộ thư viện pip đã cài
+# → Người dùng tạo lại bằng `pip install -r requirements.txt`
+.venv/
+venv/
+env/
+ENV/
+
+# Biến môi trường cục bộ (có thể chứa API key nhạy cảm)
+.env
+.env.local
+.env.production
+
+# Distribution / packaging
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# ═══════════════════════════════════════════════════════════════════════
+# 3. DỮ LIỆU LỚN — Dataset và Model weights
+# ═══════════════════════════════════════════════════════════════════════
+
+# Dataset CSV lớn (53MB+) — không phù hợp để lưu trên Git
+# → Sử dụng Git LFS hoặc tải riêng
+1_AI_Model_Training/Dataset/raw_data.csv
+1_AI_Model_Training/Dataset/Downloads/
+
+# Model weights (.pth) — file binary lớn
+# → Nên dùng Git LFS hoặc cloud storage (Google Drive, Hugging Face)
+1_AI_Model_Training/Models/*.pth
+
+# ONNX models trong thư mục training (Unity có bản riêng)
+1_AI_Model_Training/Models/*.onnx
+1_AI_Model_Training/Models/*.onnx.data
+
+# ═══════════════════════════════════════════════════════════════════════
+# 4. IDE & EDITOR — Cấu hình IDE cá nhân
+# ═══════════════════════════════════════════════════════════════════════
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.code-workspace
+
+# JetBrains Rider
+.idea/
+*.iml
+
+# ═══════════════════════════════════════════════════════════════════════
+# 5. HỆ THỐNG — File OS tự tạo
+# ═══════════════════════════════════════════════════════════════════════
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ═══════════════════════════════════════════════════════════════════════
+# 6. NuGet packages (Unity)
+# ═══════════════════════════════════════════════════════════════════════
+
+# NuGet packages đã tải — restore lại bằng NuGet CLI
+# Giữ lại packages.config và NuGet.config để biết cần cài gì
+2_Unity_Project/Motion_AR/Assets/Packages/
+!2_Unity_Project/Motion_AR/Assets/packages.config
+!2_Unity_Project/Motion_AR/Assets/NuGet.config
+
+# ═══════════════════════════════════════════════════════════════════════
+# 7. AUTO-COMMIT SCRIPT — Tránh vòng lặp tự commit chính nó
+# ═══════════════════════════════════════════════════════════════════════
+
+# Log file của auto-commit script
+auto_commit.log
+
+# ═══════════════════════════════════════════════════════════════════════
+# 8. GEMINI — Không push API key và cấu hình nhạy cảm
+# ═══════════════════════════════════════════════════════════════════════
+
+# File config chứa API key (mỗi người cấu hình riêng)
+# → Giữ lại config.json.example làm template
+**/StreamingAssets/config.json
+!**/StreamingAssets/config.json.example
+
+# ═══════════════════════════════════════════════════════════════════════
+# 9. MISC — Các file tạm khác
+# ═══════════════════════════════════════════════════════════════════════
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Gemini workspace agent data
+3_AI_Agent_Workspace/.git/
+.gemini/

@@ -1,0 +1,122 @@
+[
+  {
+    "file": "Scripts\\1b_extract_kinematics.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\1b_extract_kinematics.py",
+    "path": "raw_data.csv"
+  },
+  {
+    "file": "Scripts\\1b_extract_kinematics.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\1b_extract_kinematics.py",
+    "path": "kinematic_data.csv"
+  },
+  {
+    "file": "Scripts\\1b_extract_kinematics.py",
+    "path": "        Chay Scripts/2_generate_synthetic_data.py truoc!"
+  },
+  {
+    "file": "Scripts\\1_collect_data.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\1_collect_data.py",
+    "path": "raw_data.csv"
+  },
+  {
+    "file": "Scripts\\2_generate_synthetic_data.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\2_generate_synthetic_data.py",
+    "path": "raw_data.csv"
+  },
+  {
+    "file": "Scripts\\3_convert_dhg_dataset.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\3_convert_dhg_dataset.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\3_convert_dhg_dataset.py",
+    "path": "raw_data.csv"
+  },
+  {
+    "file": "Scripts\\3_convert_dhg_dataset.py",
+    "path": "  DHG-14/28 → raw_data.csv CONVERTER"
+  },
+  {
+    "file": "Scripts\\4_realtime_inference.py",
+    "path": "Models"
+  },
+  {
+    "file": "Scripts\\4_realtime_inference.py",
+    "path": "\n  [LỖI] Không tìm thấy file weights nào trong thư mục Models/!"
+  },
+  {
+    "file": "Scripts\\5_os_controller.py",
+    "path": "Models"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "mega_raw_data.csv"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "raw_data.csv"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "Dataset"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "*.csv"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "*.csv"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "  mega_raw_data.csv san sang!"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "\n  ✅ mega_raw_data.csv created: "
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "*.csv"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": ".csv"
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": "\n  Hoac dam bao raw_data.csv ton tai."
+  },
+  {
+    "file": "Scripts\\6_universal_dataset_builder.py",
+    "path": ".csv"
+  }
+]
