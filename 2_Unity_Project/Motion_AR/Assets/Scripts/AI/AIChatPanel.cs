@@ -194,7 +194,8 @@ namespace MotionAR.AI
         }
 
         /// <summary>
-        /// Builds the context JSON from current SessionManager state.
+        /// Builds the context JSON from current SessionManager state,
+        /// including real-time snap zone statuses and held part information.
         /// </summary>
         private string BuildCurrentContext()
         {
@@ -207,14 +208,25 @@ namespace MotionAR.AI
             var lesson = session.CurrentLesson;
             var step = session.GetCurrentStep();
 
-            // Build snap zones status.
+            // Build snap zones status from the live registry.
             var snapZones = new List<ContextBuilder.SnapZoneStatus>();
-            // Note: SnapZone uses a static registry, but we can't access it from here.
-            // In production, inject snap zone data or expose a public accessor.
+            foreach (MotionAR.Interaction.SnapZone zone in MotionAR.Interaction.SnapZone.AllZones)
+            {
+                if (zone == null) continue;
+                snapZones.Add(new ContextBuilder.SnapZoneStatus
+                {
+                    id = zone.SnapZoneID,
+                    occupied = zone.IsOccupied,
+                    partId = zone.OccupiedPartID ?? string.Empty
+                });
+            }
 
-            // Get held part ID from PinchGrabber if available.
+            // Get held part ID from PinchGrabber.
             string heldPartId = string.Empty;
-            // PinchGrabber doesn't expose held part directly, but TrainingFlowController could.
+            if (_pinchGrabber != null && _pinchGrabber.IsHolding)
+            {
+                heldPartId = _pinchGrabber.GrabbedPartID;
+            }
 
             return ContextBuilder.BuildContextJson(
                 lessonId: lesson?.lessonID ?? "",

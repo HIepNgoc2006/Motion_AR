@@ -184,3 +184,61 @@ Kiểm tra các công đoạn dở dang, rà soát lỗi, tiếp tục bước t
 
 ### 📊 Kết quả
 - **31 C# scripts** tổng | Phase 1-5 code hoàn thành
+
+---
+
+## PHIÊN 6 — 2026-06-15 (Code Review + Bug Fixes + Login/History UI)
+
+### 📌 Yêu cầu
+Review toàn bộ dự án, tiếp tục triển khai các bước tiếp theo.
+
+### 🧠 Quá trình suy nghĩ
+- Đọc toàn bộ 31 C# scripts, cross-reference API giữa các module
+- Phát hiện 6 bug/thiếu sót:
+  1. SceneBootstrapper sai namespace (`MotionAR.UI` → nên là `MotionAR.Core`)
+  2. PinchGrabber không expose trạng thái held object cho AI context
+  3. SnapZone._allZones private, AIChatPanel không build được context
+  4. AIChatPanel.BuildCurrentContext() truyền data rỗng cho Gemini
+  5. SQLiteConnector.InitializeAsync() không được gọi tự động → crash runtime
+  6. ConfigLoader timeout mặc định 30s, README nói 5s
+- Xác định 3 tính năng Phase 5 chưa code: Login, History, Lesson Select
+
+### ✏️ Thay đổi code
+
+**Bug Fixes:**
+- [MODIFY] `Core/SceneBootstrapper.cs`: Sửa namespace `MotionAR.UI` → `MotionAR.Core`, thêm auto-init SQLiteConnector
+- [MODIFY] `Interaction/PinchGrabber.cs`: Thêm `GrabbedObject`, `GrabbedPartID`, `IsHolding` public properties
+- [MODIFY] `Interaction/SnapZone.cs`: Thêm `AllZones` static IReadOnlyList accessor
+- [MODIFY] `AI/AIChatPanel.cs`: Sửa `BuildCurrentContext()` dùng API mới từ SnapZone.AllZones + PinchGrabber.GrabbedPartID
+- [MODIFY] `AI/ConfigLoader.cs`: Sửa default timeout 30s → 15s
+
+**New Features:**
+- [NEW] `UI/LoginScreen.cs`: UI đăng nhập — TMP_InputField + SQLiteConnector.GetOrCreateUserAsync + transition
+- [NEW] `UI/SessionHistoryPanel.cs`: Bảng lịch sử phiên học — grade S/A/B/C/F, color-coded, mm:ss format
+- [NEW] `UI/LessonSelectPanel.cs`: Menu chọn bài học — prefab/fallback cards, integrate SessionManager.StartLesson
+
+### 💡 Quyết định thiết kế
+1. **PinchGrabber expose read-only properties** thay vì events — đơn giản hơn cho polling context
+2. **SnapZone.AllZones là IReadOnlyList** — cho phép iterate nhưng không modify từ bên ngoài
+3. **SceneBootstrapper auto-init DB** — tập trung logic khởi tạo 1 chỗ thay vì scatter
+4. **Timeout 15s** — cân bằng giữa UX (5s quá ngắn cho cold start) và responsiveness (30s quá dài)
+5. **Fallback UI generation** — cả 3 panel mới đều có fallback tạo UI bằng code nếu chưa có prefab
+6. **LoginScreen → LessonSelectPanel → Training** — luồng navigation rõ ràng
+
+### 📊 Kết quả
+- 5 file sửa, 3 file mới
+- Tổng scripts C#: **34 files** (từ 31)
+- Cấu trúc scripts:
+  ```
+  Assets/Scripts/
+  ├── AI/ (6 files)
+  ├── Core/ (3 files)
+  ├── Data/ (2 files)
+  ├── Database/ (1 file)
+  ├── Interaction/ (9 files)
+  └── UI/ (13 files) ← 3 mới
+  ```
+- Bug fixes: 6/6 hoàn thành
+- Phase 5 UI: Login + History + Lesson Select hoàn thành
+- **Bước tiếp theo**: Setup Scene trong Unity Editor, tạo prefabs, test E2E
+

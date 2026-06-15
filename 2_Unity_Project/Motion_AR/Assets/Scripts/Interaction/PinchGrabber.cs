@@ -40,6 +40,25 @@ namespace MotionAR.Interaction
         private Vector3 _originalScale;
         private IGrabbable _grabbedComponent;
 
+        // ────────────────────── Public Read-Only State ──────────────────────
+
+        /// <summary>
+        /// The GameObject currently being held, or null if nothing is grabbed.
+        /// </summary>
+        public GameObject GrabbedObject => _grabbedObject;
+
+        /// <summary>
+        /// The PartID of the currently held part, or empty string if nothing is grabbed.
+        /// </summary>
+        public string GrabbedPartID => _grabbedComponent?.PartID ?? string.Empty;
+
+        /// <summary>
+        /// Whether the user is currently holding an object.
+        /// </summary>
+        public bool IsHolding => _grabbedObject != null;
+
+        // ────────────────────── Events ──────────────────────
+
         /// <summary>
         /// Fired when an object is successfully grabbed. Provides the grabbed GameObject.
         /// </summary>

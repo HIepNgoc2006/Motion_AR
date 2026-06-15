@@ -15,7 +15,7 @@ namespace MotionAR.AI
         private const string EnvVarName = "GEMINI_API_KEY";
         private const string ConfigFileName = "config.json";
         private const string DefaultModel = "gemini-2.0-flash";
-        private const int DefaultTimeoutSeconds = 30;
+        private const int DefaultTimeoutSeconds = 15;
 
         private static bool _isLoaded;
 

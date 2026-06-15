@@ -1,9 +1,11 @@
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 using MotionAR.Core;
+using MotionAR.Database;
 using MotionAR.Interaction;
 using MotionAR.AI;
 
-namespace MotionAR.UI
+namespace MotionAR.Core
 {
     /// <summary>
     /// Scene bootstrapper that validates and connects all required components
@@ -12,6 +14,10 @@ namespace MotionAR.UI
     /// This is a debugging/setup helper — it checks that all the required
     /// cross-references between systems are properly configured in the Inspector.
     /// Place on a root "--- SYSTEMS ---" GameObject in the scene.
+    /// </para>
+    /// <para>
+    /// Also initializes the SQLite database on startup so that other systems
+    /// (SessionManager, LoginScreen) can safely use it without manual init.
     /// </para>
     /// </summary>
     public class SceneBootstrapper : MonoBehaviour
@@ -42,6 +48,25 @@ namespace MotionAR.UI
         private void Awake()
         {
             ValidateReferences();
+            InitializeDatabaseAsync().Forget();
+        }
+
+        /// <summary>
+        /// Initializes the SQLite database on startup so all systems can safely
+        /// call InsertSessionAsync, GetOrCreateUserAsync, etc.
+        /// </summary>
+        private async UniTaskVoid InitializeDatabaseAsync()
+        {
+            try
+            {
+                await SQLiteConnector.Instance.InitializeAsync(destroyCancellationToken);
+                Debug.Log("[SceneBootstrapper] Database initialized successfully.");
+            }
+            catch (System.OperationCanceledException) { }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[SceneBootstrapper] Database init failed: {ex.Message}");
+            }
         }
 
         /// <summary>

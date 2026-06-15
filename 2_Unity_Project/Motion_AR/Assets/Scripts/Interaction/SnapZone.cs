@@ -48,6 +48,12 @@ namespace MotionAR.Interaction
 
         private static readonly List<SnapZone> _allZones = new List<SnapZone>();
 
+        /// <summary>
+        /// Read-only view of all currently registered SnapZones in the scene.
+        /// Useful for building AI context or inspecting scene state.
+        /// </summary>
+        public static IReadOnlyList<SnapZone> AllZones => _allZones;
+
         private CancellationTokenSource _flashCts;
 
         /// <summary>
