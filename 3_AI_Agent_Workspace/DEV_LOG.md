@@ -242,3 +242,38 @@ Review toàn bộ dự án, tiếp tục triển khai các bước tiếp theo.
 - Phase 5 UI: Login + History + Lesson Select hoàn thành
 - **Bước tiếp theo**: Setup Scene trong Unity Editor, tạo prefabs, test E2E
 
+---
+
+## PHIÊN 7 — 2026-06-15 (Kiểm tra luồng công việc + Hạ tầng dự án)
+
+### 📌 Yêu cầu
+1. Kiểm tra xem dự án đã có luồng công việc (workflow/task log) chưa
+2. Tạo nhật ký công việc dạng checklist
+3. Lưu lại toàn bộ lịch sử chat AI vào file
+4. Kiểm tra logic tự động commit
+
+### 🧠 Quá trình suy nghĩ
+- Đọc toàn bộ project structure: `implementation_plan.md`, `DEV_LOG.md`, `walkthrough.md`, `.ai_rules.md`
+- Kiểm tra git log: chỉ 4 commits → auto_commit.py chưa được sử dụng thường xuyên
+- Phân tích auto_commit.py: script hoàn chỉnh nhưng auto-push TẮT mặc định, phải chạy thủ công
+- Xác nhận: dự án CHƯA CÓ task checklist và CHƯA CÓ file lưu chat history
+
+### ✏️ Thay đổi code
+- [NEW] `3_AI_Agent_Workspace/task.md`: Nhật ký công việc dạng checklist — 50+ tasks, đánh dấu trạng thái hiện tại (✅/🟡/❌) cho tất cả 7 phases
+- [NEW] `3_AI_Agent_Workspace/CHAT_HISTORY.md`: File lưu lịch sử chat AI, backfill 6 phiên trước + phiên hiện tại
+- [MODIFY] `3_AI_Agent_Workspace/.ai_rules.md`: Thêm 3 quy tắc mới (#5 ghi chat history, #6 cập nhật task.md, #7 auto-commit)
+
+### 💡 Quyết định thiết kế
+1. **Task.md đặt trong 3_AI_Agent_Workspace/** — tập trung toàn bộ tài liệu AI/dev vào 1 folder, không làm rối root directory
+2. **Chat history format**: Mỗi phiên ghi: timestamp + user request + AI response (tóm tắt) + files changed → dễ tra cứu
+3. **Auto-commit phân tích**: Script đã sẵn sàng nhưng cần chạy `python auto_commit.py --push` để hoạt động liên tục. Không sửa default thành auto-push vì có thể push code lỗi.
+
+### 📊 Kết quả
+- 2 file mới tạo: task.md, CHAT_HISTORY.md
+- 1 file sửa: .ai_rules.md (thêm 3 quy tắc)
+- Hạ tầng project management hoàn thiện:
+  - `task.md` → theo dõi tiến độ
+  - `CHAT_HISTORY.md` → backup lịch sử chat
+  - `DEV_LOG.md` → nhật ký kỹ thuật chi tiết
+  - `.ai_rules.md` → quy tắc bắt buộc (7 rules)
+  - `auto_commit.py` → sẵn sàng, cần chạy
