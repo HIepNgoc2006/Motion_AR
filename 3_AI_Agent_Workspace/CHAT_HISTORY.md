@@ -141,5 +141,27 @@
 
 ---
 
+## Phiên 8 — 2026-06-15 11:02 | Triển khai bước tiếp theo (Phase 3-5)
+
+**👤 User:** Triển khai bước tiếp theo của dự án.
+
+**🤖 AI:**
+- Phân tích task.md → xác định 6 tasks code-only chưa hoàn thành
+- Tạo 4 file C# mới:
+  - `SpeechToText.cs` — Gemini multimodal audio STT (AudioClip → WAV → Base64 → API)
+  - `TextToSpeech.cs` — Windows SAPI TTS với queue playback, Vietnamese voice
+  - `ObjectPooler.cs` — Generic object pool system
+  - `ZAxisCalibrator.cs` — 3-mode Z-axis depth calibration
+- Tạo 1 shader mới:
+  - `OutlineShader.shader` — URP outline via back-face vertex extrusion + pulse animation
+- Sửa 3 file hiện tại:
+  - `AIChatPanel.cs` — Kết nối full pipeline STT + TTS
+  - `GestureDetector.cs` — Thêm frame-skip ONNX optimization
+  - `SceneBootstrapper.cs` — Thêm validation cho 4 component mới
+- **Files changed**: 4 new + 1 shader + 3 modified = 8 files
+- **Kết quả**: 38 C# scripts + 1 shader, ~32/50 tasks hoàn thành
+
+---
+
 > **GHI CHÚ**: File này sẽ được cập nhật tự động sau mỗi phiên trao đổi với AI.
 > Nếu lịch sử quá dài, các phiên cũ sẽ được tóm tắt (archive) vào `CHAT_HISTORY_ARCHIVE.md`.

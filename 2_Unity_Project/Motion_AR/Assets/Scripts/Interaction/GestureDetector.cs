@@ -47,6 +47,11 @@ namespace MotionAR.Interaction
         [Tooltip("Seconds of cooldown after a dynamic gesture is detected before the next can fire.")]
         private float _cooldownDuration = 1.0f;
 
+        [SerializeField]
+        [Tooltip("Run ONNX inference every N frames (1 = every frame, 2 = skip 1, etc.). Higher = better performance.")]
+        [Range(1, 5)]
+        private int _inferenceEveryNFrames = 2;
+
         /// <summary>Number of frames in the sliding window for dynamic gesture input.</summary>
         private const int WINDOW_SIZE = 15;
 
@@ -64,6 +69,7 @@ namespace MotionAR.Interaction
         private Worker _sentisWorker;
         private float _cooldownTimer;
         private bool _isModelLoaded;
+        private int _frameCounter;
 
         // ── StandardScaler normalization params (exported from Python) ──
         private float[] _scalerMean;
@@ -245,6 +251,13 @@ namespace MotionAR.Interaction
 
             // Only run inference when the buffer is full and cooldown has elapsed.
             if (_slidingWindow.Count < WINDOW_SIZE || _cooldownTimer > 0f)
+            {
+                return;
+            }
+
+            // Frame-skip optimization: only run ONNX every N frames.
+            _frameCounter++;
+            if (_frameCounter % _inferenceEveryNFrames != 0)
             {
                 return;
             }

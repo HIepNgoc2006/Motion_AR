@@ -44,6 +44,12 @@ namespace MotionAR.Core
         [SerializeField] private AIChatPanel _aiChatPanel;
         [SerializeField] private VoiceInputManager _voiceInputManager;
         [SerializeField] private HighlightResponder _highlightResponder;
+        [SerializeField] private SpeechToText _speechToText;
+        [SerializeField] private TextToSpeech _textToSpeech;
+
+        [Header("Infrastructure")]
+        [SerializeField] private ObjectPooler _objectPooler;
+        [SerializeField] private ZAxisCalibrator _zAxisCalibrator;
 
         private void Awake()
         {
@@ -99,6 +105,10 @@ namespace MotionAR.Core
             warnings += CheckOptional("WebcamBackground", _webcamBackground);
             warnings += CheckOptional("VoiceInputManager", _voiceInputManager);
             warnings += CheckOptional("HighlightResponder", _highlightResponder);
+            warnings += CheckOptional("SpeechToText", _speechToText);
+            warnings += CheckOptional("TextToSpeech", _textToSpeech);
+            warnings += CheckOptional("ObjectPooler", _objectPooler);
+            warnings += CheckOptional("ZAxisCalibrator", _zAxisCalibrator);
 
             // Validate data
             ValidateStreamingAssets();

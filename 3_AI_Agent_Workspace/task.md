@@ -1,5 +1,5 @@
 # ✅ NHẬT KÝ CÔNG VIỆC — MONITOR AR PROJECT
-## Cập nhật lần cuối: 2026-06-15 | Tổng: 34 C# scripts
+## Cập nhật lần cuối: 2026-06-15 | Tổng: 38 C# scripts + 1 shader
 
 > **Hướng dẫn**: Mỗi khi hoàn thành task → đổi `[ ]` thành `[x]`.
 > Task đang làm → đổi thành `[/]`.
@@ -75,20 +75,20 @@
 - [x] **3.10** `HUDManager.cs` — Central coordinator, gesture → panel toggle
 - [ ] **3.11** Tạo prefabs và Canvas hierarchy trong Unity Editor
 - [ ] **3.12** Import font Inter/Roboto vào TextMeshPro
-- [ ] **3.13** Tạo Outline Shader (URP compatible)
+- [x] **3.13** Tạo Outline Shader (URP compatible) — `Assets/Shaders/OutlineShader.shader`
 - [ ] **3.14** Audio assets (beep, click, snap sounds)
 
 ---
 
 ## PHASE 4: TÍCH HỢP AI TUTOR
-> **Trạng thái: 🟡 Code hoàn thành — chưa test thực tế**
+> **Trạng thái: 🟢 Code hoàn thành — cần test thực tế**
 
 - [x] **4.1** `VoiceInputManager.cs` — Mic recording, gesture-triggered, auto-stop
-- [ ] **4.2** Speech-to-Text integration (Gemini multimodal hoặc Google STT)
+- [x] **4.2** Speech-to-Text integration — `SpeechToText.cs` (Gemini multimodal audio API)
 - [x] **4.3** `AIChatPanel.cs` — Pipeline text/voice → Gemini → chat bubbles → highlight
 - [x] **4.4** Context Integration — ContextBuilder dùng PinchGrabber.GrabbedPartID + SnapZone.AllZones
 - [x] **4.5** `HighlightResponder.cs` — Parse AI response → emission pulse highlight
-- [ ] **4.6** TTS (Text-to-Speech) — Đọc câu trả lời AI (optional)
+- [x] **4.6** TTS (Text-to-Speech) — `TextToSpeech.cs` (Windows SAPI, queue playback)
 
 ---
 
@@ -96,10 +96,10 @@
 > **Trạng thái: 🟡 UI code hoàn thành — chưa profiling/build**
 
 - [ ] **5.1** Profiling — Unity Profiler → xác định bottleneck
-- [ ] **5.2** ONNX Inference Optimization — Batch mỗi 2-3 frames
-- [ ] **5.3** Object Pooling — Pool cho audio sources, UI elements
+- [x] **5.2** ONNX Inference Optimization — Frame-skip mỗi 2 frames (configurable `_inferenceEveryNFrames`)
+- [x] **5.3** Object Pooling — `ObjectPooler.cs` (generic pool, configurable categories, delayed return)
 - [ ] **5.4** LOD cho mô hình 3D
-- [ ] **5.5** Dynamic Z-Axis Calibration — Bounding box + push-pull gesture
+- [x] **5.5** Dynamic Z-Axis Calibration — `ZAxisCalibrator.cs` (Auto/BoundingBox/PushPull modes)
 - [x] **5.6** `LoginScreen.cs` — UI đăng nhập + SQLiteConnector integration
 - [x] **5.7** `SessionHistoryPanel.cs` — Bảng lịch sử phiên học
 - [x] **5.8** `LessonSelectPanel.cs` — Menu chọn bài học
@@ -142,9 +142,10 @@
 
 | Metric | Giá trị |
 |---|---|
-| Tổng C# scripts | 34 files |
-| Tasks hoàn thành (code) | ~25/50 |
+| Tổng C# scripts | 38 files |
+| Shader files | 1 file |
+| Tasks hoàn thành (code) | ~32/50 |
 | Tasks cần Unity Editor | ~12 |
 | Phases hoàn thành 100% | 0 (Phase 0 chưa verify) |
 | Bugs đã fix | 13 |
-| Phiên làm việc | 7 |
+| Phiên làm việc | 8 |

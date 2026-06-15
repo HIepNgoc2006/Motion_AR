@@ -42,6 +42,7 @@ namespace MotionAR.AI
         [SerializeField] private VoiceInputManager _voiceInputManager;
         [SerializeField] private PinchGrabber _pinchGrabber;
         [SerializeField] private HighlightResponder _highlightResponder;
+        [SerializeField] private TextToSpeech _textToSpeech;
 
         [Header("Settings")]
         [SerializeField] private int _maxChatHistory = 20;
@@ -116,8 +117,8 @@ namespace MotionAR.AI
         }
 
         /// <summary>
-        /// Processes recorded audio for speech-to-text.
-        /// For now, shows a placeholder message since STT requires external API.
+        /// Processes recorded audio through the Speech-to-Text pipeline.
+        /// Flow: AudioClip → SpeechToText → text → SubmitQuestion(text).
         /// </summary>
         private void HandleRecordingComplete(AudioClip clip, float duration)
         {
@@ -127,13 +128,50 @@ namespace MotionAR.AI
                 return;
             }
 
-            // TODO: Integrate with Google STT or Gemini multimodal audio API.
-            // For now, show instruction to use text input.
-            SetStatus("✅ Ghi âm xong. Chức năng STT đang phát triển — hãy dùng text input.");
+            // Full STT pipeline: AudioClip → WAV → Gemini multimodal → text → submit.
+            ProcessVoiceInputAsync(clip, duration).Forget();
+        }
 
-            // When STT is implemented, the flow will be:
-            // AudioClip → WAV bytes → STT API → text → SubmitQuestion(text)
-            Debug.Log($"[AIChatPanel] Audio recorded: {duration:F1}s, {clip.samples} samples. STT pending.");
+        /// <summary>
+        /// Async pipeline: transcribe audio → submit as text question.
+        /// </summary>
+        private async UniTaskVoid ProcessVoiceInputAsync(AudioClip clip, float duration)
+        {
+            SetStatus("🔄 Đang nhận dạng giọng nói...");
+
+            if (SpeechToText.Instance == null)
+            {
+                SetStatus("⚠ SpeechToText chưa được khởi tạo. Hãy dùng text input.");
+                Debug.LogWarning("[AIChatPanel] SpeechToText.Instance is null.");
+                return;
+            }
+
+            try
+            {
+                CancelQuery();
+                _queryCts = new CancellationTokenSource();
+
+                string transcription = await SpeechToText.Instance.TranscribeAsync(
+                    clip, _queryCts.Token);
+
+                if (string.IsNullOrWhiteSpace(transcription))
+                {
+                    SetStatus("⚠ Không nhận dạng được giọng nói. Hãy thử lại.");
+                    return;
+                }
+
+                Debug.Log($"[AIChatPanel] Transcribed ({duration:F1}s): \"{transcription}\"");
+                SubmitQuestion(transcription);
+            }
+            catch (System.OperationCanceledException)
+            {
+                SetStatus("❌ Đã hủy.");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[AIChatPanel] Voice input error: {ex.Message}");
+                SetStatus("⚠ Lỗi nhận dạng giọng nói. Hãy dùng text input.");
+            }
         }
 
         /// <summary>
@@ -175,6 +213,16 @@ namespace MotionAR.AI
                 if (_highlightResponder != null)
                 {
                     _highlightResponder.ProcessAIResponse(response);
+                }
+
+                // 7. Text-to-Speech: read AI response aloud.
+                if (_textToSpeech != null && _textToSpeech.IsAvailable)
+                {
+                    _textToSpeech.Speak(response);
+                }
+                else if (TextToSpeech.Instance != null && TextToSpeech.Instance.IsAvailable)
+                {
+                    TextToSpeech.Instance.Speak(response);
                 }
             }
             catch (OperationCanceledException)

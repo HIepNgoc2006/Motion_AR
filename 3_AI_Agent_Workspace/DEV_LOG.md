@@ -277,3 +277,70 @@ Review toàn bộ dự án, tiếp tục triển khai các bước tiếp theo.
   - `DEV_LOG.md` → nhật ký kỹ thuật chi tiết
   - `.ai_rules.md` → quy tắc bắt buộc (7 rules)
   - `auto_commit.py` → sẵn sàng, cần chạy
+
+---
+
+## PHIÊN 8 — 2026-06-15 (Triển khai bước tiếp theo — Phase 3-5 completion)
+
+### 📌 Yêu cầu
+Triển khai bước tiếp theo của dự án.
+
+### 🧠 Quá trình suy nghĩ
+- Phân tích task.md → xác định 6 tasks code-only chưa hoàn thành (không cần Unity Editor)
+- Đọc API surfaces: VoiceInputManager (events), GeminiApiConnector (AskGeminiAsync), AIChatPanel (pipeline), GestureDetector (inference), ConfigLoader (static props), SnapZone, PinchGrabber
+- Quyết định dùng Gemini 2.0 Flash multimodal audio cho STT (giảm dependency, cùng API key)
+- Quyết định dùng Windows SAPI cho TTS (native, không cần cloud API thêm)
+- Quyết định frame-skip cho ONNX optimization (configurable, mặc định 2)
+
+### ✏️ Thay đổi code
+
+**New Files:**
+- [NEW] `Scripts/AI/SpeechToText.cs`: AudioClip → WAV bytes → Base64 → Gemini multimodal → text. Singleton, events OnTranscriptionComplete/Failed, thread-safe
+- [NEW] `Scripts/AI/TextToSpeech.cs`: Windows SAPI via System.Speech.Synthesis. Queue-based playback, text segmentation at sentence boundaries, Vietnamese voice auto-selection, cross-platform fallback (simulated delay)
+- [NEW] `Scripts/Core/ObjectPooler.cs`: Generic pool system — configurable categories (PoolConfig), max capacity, delayed return (UniTask), runtime RegisterPool, stats API
+- [NEW] `Scripts/Core/ZAxisCalibrator.cs`: 3-mode Z calibration — Auto (min/max tracking N frames), BoundingBox (ThumbsUp/Down gesture triggers), PushPull (continuous). Smoothing filter, CalibrateZ/CalibrateHandData API
+- [NEW] `Assets/Shaders/OutlineShader.shader`: URP single-pass outline — Cull Front vertex extrusion, pulse animation, HDR color, fog support, SRPDefaultUnlit light mode
+
+**Modified Files:**
+- [MODIFY] `Scripts/AI/AIChatPanel.cs`:
+  - Added `_textToSpeech` SerializeField
+  - Replaced TODO `HandleRecordingComplete()` with full STT pipeline: AudioClip → SpeechToText.Instance.TranscribeAsync → SubmitQuestion
+  - Added TTS playback after AI response (step 7 in ProcessQuestionAsync)
+- [MODIFY] `Scripts/Interaction/GestureDetector.cs`:
+  - Added `_inferenceEveryNFrames` configurable field (default 2)
+  - Added `_frameCounter` tracking
+  - Frame-skip guard in ProcessDynamicGesture → RunInference
+- [MODIFY] `Scripts/Core/SceneBootstrapper.cs`:
+  - Added 4 new SerializeField references (SpeechToText, TextToSpeech, ObjectPooler, ZAxisCalibrator)
+  - Added validation checks in ValidateReferences
+
+### 💡 Quyết định thiết kế
+1. **Gemini multimodal STT thay vì Google Cloud STT** — Cùng API key, cùng library (Newtonsoft, UnityWebRequest), không thêm dependency. Gemini 2.0 Flash hỗ trợ audio input native.
+2. **WAV format cho audio upload** — Đơn giản nhất, không cần encoder. 16-bit PCM WAV → Base64 → inline_data. File size ~50KB cho 5 giây audio.
+3. **Windows SAPI TTS** — #if UNITY_STANDALONE_WIN conditional. Không cần cloud API key thêm. Tự động tìm Vietnamese voice nếu có.
+4. **Queue-based TTS** — Đợt câu dài, chia segment tại dấu câu. Không bị chồng chéo nếu nhiều response liên tiếp.
+5. **Frame-skip ONNX** — `_inferenceEveryNFrames = 2` mặc định. Giảm 50% GPU load nhưng latency chỉ tăng ~33ms ở 30 FPS. Inspector slider 1-5.
+6. **ObjectPooler generic** — Tag-based lookup, PoolConfig SerializeField list. Hỗ trợ runtime RegisterPool cho dynamic prefabs.
+7. **ZAxisCalibrator 3-mode** — Auto mode (mặc định) hoạt động passive, PushPull chủ động, BoundingBox cần gesture trigger.
+8. **Outline shader Cull Front** — Extrude back faces thay vì post-processing → tương thích mobile, không cần extra render pass.
+
+### 📊 Kết quả
+- 5 file mới (4 C# + 1 shader), 3 file sửa
+- Tổng scripts C#: **38 files** (từ 34)
+- Tổng shaders: **1 file**
+- Cấu trúc scripts:
+  ```
+  Assets/Scripts/
+  ├── AI/ (8 files) ← 2 mới (SpeechToText, TextToSpeech)
+  ├── Core/ (5 files) ← 2 mới (ObjectPooler, ZAxisCalibrator)
+  ├── Data/ (2 files)
+  ├── Database/ (1 file)
+  ├── Interaction/ (9 files) ← 1 sửa (GestureDetector)
+  └── UI/ (13 files)
+  Assets/Shaders/
+  └── OutlineShader.shader ← MỚI
+  ```
+- Phase 3: **90%** (thêm shader, còn prefabs + font + audio trong Unity)
+- Phase 4: **100% code** (STT + TTS hoàn thành)
+- Phase 5: **70%** (ObjectPooler + ZAxisCalibrator + ONNX opt, còn profiling + build)
+- **Tasks hoàn thành: ~32/50**
