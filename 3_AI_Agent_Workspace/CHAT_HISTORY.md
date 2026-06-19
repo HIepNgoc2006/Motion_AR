@@ -163,5 +163,27 @@
 
 ---
 
+## Phiên 9 — 2026-06-19 13:25 | App Flow + Scene Setup + Performance Monitor
+
+**👤 User:** Tiếp tục triển khai dự án, chú ý những gì các file markdown đã ghi.
+
+**🤖 AI:**
+- Đọc toàn bộ markdown files: README, CHAT_HISTORY, task.md, DEV_LOG, .ai_rules, implementation_plan
+- Phân tích 38 scripts hiện tại, xác định gaps trong architecture
+- Tạo 5 file C# mới:
+  1. `AppFlowManager.cs` — App navigation (Login → LessonSelect → Training → Score) with fade transitions
+  2. `PerformanceMonitor.cs` — FPS/memory overlay, color-coded, auto-create fallback UI
+  3. `SceneSetupHelper.cs` — Editor script tự tạo scene hierarchy (menu: Motion AR → Setup Training Scene)
+  4. `InputModeSwitch.cs` — Mock ↔ MediaPipe hot-swap at runtime
+  5. `SettingsPanel.cs` — Settings UI (volume, input mode, features, hand size)
+- Sửa 2 file hiện tại:
+  1. `SettingsManager.cs` — Thêm GetString/SetString generic helpers
+  2. `SceneBootstrapper.cs` — Thêm using MotionAR.UI, validation cho 3 component mới
+- **Files changed**: 5 new + 2 modified = 7 files
+- **Kết quả**: 43 C# scripts + 1 shader + 1 Editor script, ~38/55 tasks hoàn thành
+
+---
+
 > **GHI CHÚ**: File này sẽ được cập nhật tự động sau mỗi phiên trao đổi với AI.
 > Nếu lịch sử quá dài, các phiên cũ sẽ được tóm tắt (archive) vào `CHAT_HISTORY_ARCHIVE.md`.
+

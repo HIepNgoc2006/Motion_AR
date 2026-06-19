@@ -129,6 +129,26 @@ namespace MotionAR.Core
                       $"Input={CurrentInputMode}, Mirror={MirrorWebcam}");
         }
 
+        // ─────────────── Generic Helpers ───────────────
+
+        /// <summary>
+        /// Gets a string value from PlayerPrefs with a default fallback.
+        /// Use for ad-hoc settings that don't have a dedicated property.
+        /// </summary>
+        public string GetString(string key, string defaultValue = "")
+        {
+            return PlayerPrefs.GetString(key, defaultValue);
+        }
+
+        /// <summary>
+        /// Sets a string value in PlayerPrefs and saves immediately.
+        /// </summary>
+        public void SetString(string key, string value)
+        {
+            PlayerPrefs.SetString(key, value);
+            PlayerPrefs.Save();
+        }
+
         /// <summary>
         /// Resets all settings to defaults and saves.
         /// </summary>

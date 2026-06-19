@@ -344,3 +344,78 @@ Triển khai bước tiếp theo của dự án.
 - Phase 4: **100% code** (STT + TTS hoàn thành)
 - Phase 5: **70%** (ObjectPooler + ZAxisCalibrator + ONNX opt, còn profiling + build)
 - **Tasks hoàn thành: ~32/50**
+
+---
+
+## PHIÊN 9 — 2026-06-19 (App Flow + Scene Setup + Performance Monitor)
+
+### 📌 Yêu cầu
+Tiếp tục triển khai dự án, chú ý các quy tắc trong markdown files (.ai_rules, task.md, CHAT_HISTORY, implementation_plan).
+
+### 🧠 Quá trình suy nghĩ
+- Đọc toàn bộ 8 markdown files trong `3_AI_Agent_Workspace/` + `README.md` + `implementation_plan.md`
+- Đọc `.ai_rules.md` → ghi nhận 7 quy tắc bắt buộc
+- Phân tích `task.md` → xác định remaining tasks: 38 C# scripts đã có, 32/50 tasks xong
+- Đọc 38 scripts hiện tại, cross-reference API giữa tất cả modules
+- Xác định 5 gaps chính trong architecture:
+  1. **Không có app navigation** — Login/LessonSelect/Training/Score không có controller quản lý luồng
+  2. **Không có Editor scene setup** — Task 1.3 "Setup Scene" phải làm thủ công trong Unity → cần automation
+  3. **Không có FPS monitor** — Task 5.1 "Profiling" chưa có tool hiển thị performance
+  4. **Không có input mode switch** — Mock ↔ MediaPipe chỉ config trong SettingsManager nhưng không có runtime toggle
+  5. **Không có Settings UI** — SettingsManager tồn tại nhưng không có panel UI
+- Phát hiện 1 bug: `SceneBootstrapper.cs` thiếu `using MotionAR.UI;` → HUDManager/AudioFeedbackManager types không resolve
+- Phát hiện thiếu API: `SettingsManager.cs` không có `GetString`/`SetString` → InputModeSwitch cần
+
+### ✏️ Thay đổi code
+
+**New Files:**
+- [NEW] `Scripts/Core/AppFlowManager.cs`: Singleton navigation controller — 6 phases (Login/LessonSelect/Training/Score/History/Settings), fade transitions via CanvasGroup + UniTask, panel visibility management
+- [NEW] `Scripts/Core/PerformanceMonitor.cs`: FPS/memory/frame-time overlay — color-coded (green/amber/red) based on target FPS, auto-create fallback UI if no TMP assigned, configurable update interval
+- [NEW] `Scripts/Editor/SceneSetupHelper.cs`: Menu "Motion AR → Setup Training Scene" — creates full hierarchy (8 system GOs, cursor visual with emissive cyan material, 3 sample GrabbableParts, 3 SnapZones, UI Canvas with 6 panels, transition overlay, EventSystem), auto-creates "Grabbable" layer, assigns SerializedField references via SerializedObject
+- [NEW] `Scripts/Interaction/InputModeSwitch.cs`: Runtime Mock ↔ MediaPipe switch — reads SettingsManager for saved preference, hot-swap without scene reload, persists via SetString
+- [NEW] `Scripts/UI/SettingsPanel.cs`: Settings UI bindings — sliders (SFX/UI volume, hand size), toggles (Mock/MediaPipe, mirror webcam, show hints), reset button, back button → AppFlowManager.GoBack()
+
+**Modified Files:**
+- [MODIFY] `Scripts/Core/SettingsManager.cs`: Added `GetString(key, default)` and `SetString(key, value)` generic PlayerPrefs helpers — allow other systems to persist settings without modifying SettingsManager class
+- [MODIFY] `Scripts/Core/SceneBootstrapper.cs`:
+  - Added `using MotionAR.UI;` (fix missing namespace for HUDManager/AudioFeedbackManager)
+  - Added 3 new SerializeField references: AppFlowManager, PerformanceMonitor, InputModeSwitch
+  - Added 3 new validation checks in ValidateReferences()
+
+### 💡 Quyết định thiết kế
+1. **Single-scene architecture** — AppFlowManager toggles panels on/off within one scene thay vì multi-scene loading → faster transitions, shared references, no DontDestroyOnLoad complexity
+2. **Fade transition via CanvasGroup** — Black overlay with alpha animation thay vì scene loading screen → smooth, no frame drops
+3. **SceneSetupHelper as Editor script** — `#if UNITY_EDITOR` guarded, accessible via menu → replaces 12+ manual Unity Editor tasks. Full Undo support cho reversibility.
+4. **InputModeSwitch tách biệt SettingsManager** — SettingsManager chỉ lưu preference, InputModeSwitch thực hiện switching logic → Single Responsibility
+5. **PerformanceMonitor auto-create UI** — Nếu không có TMP reference → tự tạo TextMeshPro + background Image → zero manual setup needed
+6. **Generic GetString/SetString** — Thay vì thêm dedicated property cho mỗi setting → generic key-value pattern cho ad-hoc settings
+
+### 📊 Kết quả
+- 5 file mới, 2 file sửa
+- Tổng scripts C#: **43 files** (từ 38) + 1 Editor script
+- Cấu trúc scripts:
+  ```
+  Assets/Scripts/
+  ├── AI/ (7 files)
+  ├── Core/ (7 files) ← 2 mới (AppFlowManager, PerformanceMonitor), 2 sửa
+  ├── Data/ (2 files)
+  ├── Database/ (1 file)
+  ├── Editor/ (1 file) ← MỚI (SceneSetupHelper)
+  ├── Interaction/ (10 files) ← 1 mới (InputModeSwitch)
+  └── UI/ (14 files) ← 1 mới (SettingsPanel)
+  Assets/Shaders/
+  └── OutlineShader.shader
+  ```
+- Phase 1: **100% code** (SceneSetupHelper replaces manual setup)
+- Phase 2: **100% code** (InputModeSwitch completes hot-swap)
+- Phase 3: **90% code** (còn font + audio trong Unity)
+- Phase 4: **100% code**
+- Phase 5: **80%** (PerformanceMonitor + SettingsPanel added, còn LOD + build + testing)
+- Bug fixed: 1 (missing `using MotionAR.UI` in SceneBootstrapper)
+- **Tasks hoàn thành: ~38/55**
+- **Bước tiếp theo**:
+  1. Mở Unity → chạy "Motion AR → Setup Training Scene" để tạo scene
+  2. Tạo LessonData ScriptableObject mẫu
+  3. Assign ONNX model vào GestureDetector
+  4. Test End-to-End với MockProvider
+  5. Import audio assets + fonts

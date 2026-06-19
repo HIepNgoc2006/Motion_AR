@@ -4,6 +4,7 @@ using MotionAR.Core;
 using MotionAR.Database;
 using MotionAR.Interaction;
 using MotionAR.AI;
+using MotionAR.UI;
 
 namespace MotionAR.Core
 {
@@ -50,6 +51,13 @@ namespace MotionAR.Core
         [Header("Infrastructure")]
         [SerializeField] private ObjectPooler _objectPooler;
         [SerializeField] private ZAxisCalibrator _zAxisCalibrator;
+
+        [Header("Navigation & Debug")]
+        [SerializeField] private AppFlowManager _appFlowManager;
+        [SerializeField] private PerformanceMonitor _performanceMonitor;
+
+        [Header("Input")]
+        [SerializeField] private InputModeSwitch _inputModeSwitch;
 
         private void Awake()
         {
@@ -109,6 +117,9 @@ namespace MotionAR.Core
             warnings += CheckOptional("TextToSpeech", _textToSpeech);
             warnings += CheckOptional("ObjectPooler", _objectPooler);
             warnings += CheckOptional("ZAxisCalibrator", _zAxisCalibrator);
+            warnings += CheckOptional("AppFlowManager", _appFlowManager);
+            warnings += CheckOptional("PerformanceMonitor", _performanceMonitor);
+            warnings += CheckOptional("InputModeSwitch", _inputModeSwitch);
 
             // Validate data
             ValidateStreamingAssets();
