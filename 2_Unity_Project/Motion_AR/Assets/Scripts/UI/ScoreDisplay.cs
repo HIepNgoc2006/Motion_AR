@@ -49,7 +49,7 @@ namespace MotionAR.UI
             }
         }
 
-        private void OnEnable()
+        private void Start()
         {
             if (SessionManager.Instance != null)
             {

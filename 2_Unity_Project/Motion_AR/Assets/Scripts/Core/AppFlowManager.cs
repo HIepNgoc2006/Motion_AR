@@ -70,7 +70,6 @@ namespace MotionAR.Core
         [Tooltip("Duration of fade transitions in seconds.")]
         private float _fadeDuration = 0.3f;
 
-        private bool _isTransitioning;
         private CancellationTokenSource _transitionCts;
 
         // ────────────────────── Events ──────────────────────
@@ -215,13 +214,14 @@ namespace MotionAR.Core
         private async UniTaskVoid FadeTransitionAsync(AppPhase targetPhase)
         {
             // Cancel any in-flight transition to prevent stacking.
+            // The cancelled transition will apply its phase immediately in the catch block.
             _transitionCts?.Cancel();
             _transitionCts?.Dispose();
             _transitionCts = new CancellationTokenSource();
             var ct = _transitionCts.Token;
 
-            if (_isTransitioning) return;
-            _isTransitioning = true;
+            // Wait one frame for the cancelled transition to finish executing.
+            await UniTask.Yield(PlayerLoopTiming.Update);
 
             try
             {
@@ -271,10 +271,6 @@ namespace MotionAR.Core
                     _transitionOverlay.blocksRaycasts = false;
                     _transitionOverlay.gameObject.SetActive(false);
                 }
-            }
-            finally
-            {
-                _isTransitioning = false;
             }
         }
 

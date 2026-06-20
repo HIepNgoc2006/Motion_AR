@@ -374,14 +374,26 @@ namespace MotionAR.Interaction
         /// <returns>The corresponding GestureType, or GestureType.None for unknown indices.</returns>
         private static GestureType MapIndexToGestureType(int index)
         {
-            // Map model output indices to GestureType enum values.
-            // The enum is defined with explicit values 0-13.
-            if (index >= 0 && index <= 13)
+            // Python's LabelEncoder sorts class labels alphabetically.
+            // Model output indices (alphabetical) → Unity GestureType enum values.
+            return index switch
             {
-                return (GestureType)index;
-            }
-
-            return GestureType.None;
+                0  => GestureType.OpenPalm,    // expand   → OpenPalm
+                1  => GestureType.Grab,        // grab     → Grab
+                2  => GestureType.None,        // pinch    → handled by Task 1 (instant pinch detection)
+                3  => GestureType.None,        // rotation_ccw → no Unity mapping yet
+                4  => GestureType.None,        // rotation_cw  → no Unity mapping yet
+                5  => GestureType.None,        // shake    → no Unity mapping yet
+                6  => GestureType.SwipeDown,   // swipe_down  → SwipeDown
+                7  => GestureType.SwipeLeft,   // swipe_left  → SwipeLeft
+                8  => GestureType.None,        // swipe_plus  → no Unity mapping yet
+                9  => GestureType.SwipeRight,  // swipe_right → SwipeRight
+                10 => GestureType.SwipeUp,     // swipe_up    → SwipeUp
+                11 => GestureType.Peace,       // swipe_v     → Peace
+                12 => GestureType.None,        // swipe_x     → no Unity mapping yet
+                13 => GestureType.Tap,         // tap         → Tap
+                _  => GestureType.None
+            };
         }
 
         /// <summary>

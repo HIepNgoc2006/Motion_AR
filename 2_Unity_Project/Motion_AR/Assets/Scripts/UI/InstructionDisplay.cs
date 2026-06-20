@@ -44,7 +44,7 @@ namespace MotionAR.UI
 
         private CancellationTokenSource _fadeCts;
 
-        private void OnEnable()
+        private void Start()
         {
             if (SessionManager.Instance != null)
             {

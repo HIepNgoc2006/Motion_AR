@@ -70,17 +70,29 @@ namespace MotionAR.UI
             if (_panelSlideSound == null) _panelSlideSound = ProceduralAudio.Slide;
 
             Debug.Log("[AudioFeedbackManager] Audio clips ready (procedural fallbacks applied).");
+
+            // Subscribe to SessionManager events in Start() to guarantee Instance is initialized
+            // (all Awake() calls complete before any Start() call).
+            if (SessionManager.Instance != null)
+            {
+                SessionManager.Instance.OnStepChanged += HandleStepChanged;
+                SessionManager.Instance.OnMistakeRecorded += PlayMistake;
+                SessionManager.Instance.OnLessonCompleted += HandleLessonCompleted;
+            }
         }
 
-        private void OnEnable()
+        private void OnDisable()
         {
             if (SessionManager.Instance != null)
             {
-                SessionManager.Instance.OnStepChanged += _ => PlayStepAdvance();
-                SessionManager.Instance.OnMistakeRecorded += PlayMistake;
-                SessionManager.Instance.OnLessonCompleted += _ => PlayLessonComplete();
+                SessionManager.Instance.OnStepChanged -= HandleStepChanged;
+                SessionManager.Instance.OnMistakeRecorded -= PlayMistake;
+                SessionManager.Instance.OnLessonCompleted -= HandleLessonCompleted;
             }
         }
+
+        private void HandleStepChanged(MotionAR.Data.StepData step) => PlayStepAdvance();
+        private void HandleLessonCompleted(float score) => PlayLessonComplete();
 
         // ─────────────────── Public Play Methods ───────────────────
 

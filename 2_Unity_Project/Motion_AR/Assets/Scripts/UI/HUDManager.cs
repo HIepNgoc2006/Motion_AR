@@ -53,7 +53,10 @@ namespace MotionAR.UI
             {
                 _gestureDetector.OnDynamicGestureDetected += HandleGesture;
             }
+        }
 
+        private void Start()
+        {
             if (SessionManager.Instance != null)
             {
                 SessionManager.Instance.OnLessonStarted += HandleLessonStarted;

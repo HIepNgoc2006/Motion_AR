@@ -293,10 +293,14 @@ namespace MotionAR.Core
 
             if (_handTrackingReceiver == null) return;
 
-            // We'll use the last known wrist Z.
-            // In a real implementation, we'd get the current HandData directly.
-            float currentZ = 0f;
-            // Simplified: use the gesture as a trigger to save current Z.
+            // Read the actual wrist Z position from the latest hand tracking data.
+            HandData latestData = _handTrackingReceiver.LatestHandData;
+            if (latestData.Landmarks == null || latestData.Landmarks.Length == 0)
+            {
+                Debug.LogWarning("[ZAxisCalibrator] No hand data available for calibration.");
+                return;
+            }
+            float currentZ = latestData.Landmarks[0].z; // Landmark 0 = Wrist
 
             if (gesture == GestureType.ThumbsUp)
             {

@@ -58,7 +58,7 @@ namespace MotionAR.AI
         private readonly Queue<string> _speechQueue = new Queue<string>();
         private AudioSource _audioSource;
 
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
         private System.Speech.Synthesis.SpeechSynthesizer _synthesizer;
 #endif
 
@@ -90,7 +90,7 @@ namespace MotionAR.AI
         /// </summary>
         private void InitializeSynthesizer()
         {
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
             try
             {
                 _synthesizer = new System.Speech.Synthesis.SpeechSynthesizer();
@@ -135,7 +135,7 @@ namespace MotionAR.AI
         /// </summary>
         private void DisposeSynthesizer()
         {
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
             if (_synthesizer != null)
             {
                 try
@@ -184,7 +184,7 @@ namespace MotionAR.AI
         {
             _speechQueue.Clear();
 
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
             if (_synthesizer != null && _isSpeaking)
             {
                 _synthesizer.SpeakAsyncCancelAll();
@@ -213,7 +213,7 @@ namespace MotionAR.AI
         public void SetVolume(float volume)
         {
             _volume = Mathf.Clamp01(volume);
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
             if (_synthesizer != null)
             {
                 _synthesizer.Volume = Mathf.RoundToInt(_volume * 100f);
@@ -227,7 +227,7 @@ namespace MotionAR.AI
         public void SetRate(int rate)
         {
             _speechRate = Mathf.Clamp(rate, -10, 10);
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
             if (_synthesizer != null)
             {
                 _synthesizer.Rate = _speechRate;
@@ -250,7 +250,7 @@ namespace MotionAR.AI
             _isSpeaking = true;
             OnSpeechStarted?.Invoke(segment);
 
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
             if (_synthesizer != null)
             {
                 _synthesizer.SpeakAsync(segment);
@@ -261,7 +261,7 @@ namespace MotionAR.AI
 #endif
         }
 
-#if UNITY_STANDALONE_WIN
+#if ENABLE_SAPI_TTS
         private void OnSynthesizerSpeakCompleted(object sender,
             System.Speech.Synthesis.SpeakCompletedEventArgs e)
         {

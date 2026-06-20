@@ -54,11 +54,6 @@ namespace MotionAR.Interaction
             {
                 _pinchGrabber.OnObjectReleased += HandleObjectReleased;
             }
-
-            if (SessionManager.Instance != null)
-            {
-                SessionManager.Instance.OnLessonCompleted += HandleLessonCompleted;
-            }
         }
 
         private void OnDisable()
@@ -76,6 +71,12 @@ namespace MotionAR.Interaction
 
         private void Start()
         {
+            // Subscribe to SessionManager events in Start() to guarantee Instance is initialized.
+            if (SessionManager.Instance != null)
+            {
+                SessionManager.Instance.OnLessonCompleted += HandleLessonCompleted;
+            }
+
             if (_autoStartLesson && _lessonData != null)
             {
                 if (SessionManager.Instance != null)

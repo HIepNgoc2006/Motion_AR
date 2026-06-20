@@ -40,7 +40,7 @@ namespace MotionAR.UI
         private StepItemUI[] _stepItems;
         private int _totalSteps;
 
-        private void OnEnable()
+        private void Start()
         {
             if (SessionManager.Instance != null)
             {
