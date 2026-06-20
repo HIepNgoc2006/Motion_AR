@@ -76,10 +76,18 @@ namespace MotionAR.Interaction
 
         private void Start()
         {
-            if (_autoStartLesson && _lessonData != null && SessionManager.Instance != null)
+            if (_autoStartLesson && _lessonData != null)
             {
-                SessionManager.Instance.StartLesson(_lessonData);
-                Debug.Log($"[TrainingFlowController] Auto-started lesson: {_lessonData.lessonTitle}");
+                if (SessionManager.Instance != null)
+                {
+                    SessionManager.Instance.StartLesson(_lessonData);
+                    Debug.Log($"[TrainingFlowController] Auto-started lesson: {_lessonData.lessonTitle}");
+                }
+                else
+                {
+                    Debug.LogWarning("[TrainingFlowController] Auto-start configured but SessionManager.Instance is null. " +
+                        "Ensure SessionManager exists in the scene before TrainingFlowController.");
+                }
             }
         }
 
