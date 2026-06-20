@@ -632,3 +632,28 @@ Tiếp tục triển khai dự án — sửa các lỗi P1/P2 còn lại từ Co
 - **Tổng bugs fixed lũy kế**: 30
 - **Phiên làm việc**: 15
 
+---
+
+## PHIÊN 15 Part 2 — 2026-06-20 (Sample Lessons + Unit Tests)
+
+### 📌 Yêu cầu
+Hoàn thành các task còn dang dở: Task 1.5 (LessonData mẫu) và Code Review P1 (thiếu Unit Tests).
+
+### ✏️ Files Created
+
+| # | File | Mô tả |
+|---|---|---|
+| 1 | `Editor/SampleLessonCreator.cs` | Menu "Motion AR → Create Sample Lessons" — tự động tạo 2 LessonData ScriptableObject mẫu (Máy bơm nước 3 steps, Động cơ điện 4 steps) |
+| 2 | `Tests/EditMode/LessonDataTests.cs` | 13 unit tests cho LessonData: TotalSteps, GetStep boundary, null safety, data integrity |
+| 3 | `Tests/EditMode/ScoringTests.cs` | 8 unit tests cho scoring formula: boundary, monotonic decrease, floor at 0, range |
+| 4 | `Tests/EditMode/HandDataTests.cs` | 11 unit tests cho HandData struct: defensive copy, null safety, enum values |
+| 5 | `Tests/EditMode/MotionAR.Tests.EditMode.asmdef` | Assembly definition cho EditMode tests |
+
+### 📊 Kết quả
+- **Build**: 0 errors, 0 warnings ✅
+- **New files**: 5 (1 Editor script + 3 test files + 1 asmdef)
+- **Total unit tests**: 32
+- **Total C# scripts**: 54 (49 + 1 Editor + 3 test + 1 asmdef)
+- **Task 1.5**: ✅ Hoàn thành (via Editor menu auto-generation)
+- **Code Review P1 #9 (No Tests)**: ✅ Đã giải quyết
+

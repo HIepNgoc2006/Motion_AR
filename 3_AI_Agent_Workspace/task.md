@@ -1,5 +1,5 @@
 # ✅ NHẬT KÝ CÔNG VIỆC — MONITOR AR PROJECT
-## Cập nhật lần cuối: 2026-06-19 | Tổng: 49 C# scripts + 1 shader + 1 Editor script
+## Cập nhật lần cuối: 2026-06-20 | Tổng: 54 C# scripts + 1 shader + 2 Editor scripts + 3 test files
 
 > **Hướng dẫn**: Mỗi khi hoàn thành task → đổi `[ ]` thành `[x]`.
 > Task đang làm → đổi thành `[/]`.
@@ -31,7 +31,7 @@
   - [x] Tạo Layer "Grabbable" (auto)
   - [x] Assign references (ONNX model, GestureDetector, etc.) (auto)
 - [x] **1.4** Tạo `GrabbablePart.cs` (IGrabbable implementation)
-- [ ] **1.5** Tạo LessonData ScriptableObject mẫu (Right-click trong Unity)
+- [x] **1.5** Tạo LessonData ScriptableObject mẫu → **SampleLessonCreator.cs** (Editor menu auto-generate 2 bài mẫu)
 - [x] **1.6** Tạo `TrainingFlowController.cs` (Orchestrator: PinchGrabber → SnapZone → SessionManager)
 - [ ] **1.7** Test End-to-End với MockProvider
   - [ ] CursorVisual di chuyển theo chuột
@@ -172,8 +172,9 @@
 
 | Metric | Giá trị |
 |---|---|
-| Tổng C# scripts | 49 files |
-| Editor scripts | 1 file |
+| Tổng C# scripts | 54 files |
+| Editor scripts | 2 files |
+| Test scripts | 3 files (32 tests) |
 | Shader files | 1 file |
 | Tasks hoàn thành (code) | ~47/60 |
 | Tasks cần Unity Editor | ~8 |
@@ -210,8 +211,9 @@ Assets/Scripts/
 │   └── StepData.cs
 ├── Database/ (1 file)
 │   └── SQLiteConnector.cs
-├── Editor/ (1 file)
-│   └── SceneSetupHelper.cs
+├── Editor/ (2 files)
+│   ├── SceneSetupHelper.cs
+│   └── SampleLessonCreator.cs  ← MỚI (Phiên 15)
 ├── Interaction/ (10 files)
 │   ├── GestureDetector.cs
 │   ├── GrabbablePart.cs
@@ -223,6 +225,11 @@ Assets/Scripts/
 │   ├── SnapZone.cs
 │   ├── TrainingFlowController.cs
 │   └── WebcamBackground.cs
+├── Tests/EditMode/ (4 files)    ← MỚI (Phiên 15)
+│   ├── MotionAR.Tests.EditMode.asmdef
+│   ├── LessonDataTests.cs      (13 tests)
+│   ├── ScoringTests.cs         (8 tests)
+│   └── HandDataTests.cs        (11 tests)
 └── UI/ (20 files)
     ├── AudioFeedbackManager.cs   ← SỬA (Phiên 13)
     ├── ConfirmDialog.cs          ← MỚI (Phiên 13)

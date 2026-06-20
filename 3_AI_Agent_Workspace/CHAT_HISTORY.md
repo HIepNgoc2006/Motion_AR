@@ -277,6 +277,16 @@
 - Build: **0 errors, 1 warning** (harmless CS0219).
 - **Tổng bugs fixed lũy kế**: 30
 
+## Phiên 15 Part 2 — 2026-06-20 (Sample Lessons + Unit Tests)
+- Tạo **SampleLessonCreator.cs** — Editor menu "Motion AR → Create Sample Lessons" tự động generate 2 LessonData ScriptableObject mẫu.
+- Tạo **32 unit tests** trên 3 test files:
+  - `LessonDataTests.cs` (13 tests) — TotalSteps, GetStep boundary, null safety
+  - `ScoringTests.cs` (8 tests) — Scoring formula boundaries, monotonic decrease
+  - `HandDataTests.cs` (11 tests) — Defensive copy, immutability, enum values
+- Tạo `MotionAR.Tests.EditMode.asmdef` cho Unity Test Runner.
+- Build: **0 errors, 0 warnings** ✅
+- Task 1.5 (LessonData mẫu): ✅ Hoàn thành
+
 ---
 
 > **GHI CHÚ**: File này sẽ được cập nhật tự động sau mỗi phiên trao đổi với AI.
