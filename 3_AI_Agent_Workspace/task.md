@@ -178,8 +178,8 @@
 | Tasks hoàn thành (code) | ~47/60 |
 | Tasks cần Unity Editor | ~8 |
 | Phases hoàn thành 100% | 0 (Phase 0 chưa verify trong Unity) |
-| Bugs đã fix | 25 |
-| Phiên làm việc | 14 |
+| Bugs đã fix | 30 |
+| Phiên làm việc | 15 |
 
 ---
 

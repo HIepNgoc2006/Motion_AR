@@ -16,6 +16,14 @@ namespace MotionAR.Interaction
         /// <summary>
         /// Thread-safe queue shared between producer threads and this consumer.
         /// Producers push hand data from any thread; the consumer drains it in Update().
+        /// <para>
+        /// <b>Design Decision — Intentionally Static:</b> This queue is static so that
+        /// all producer threads (e.g., <c>MediaPipeUDPProvider</c>, <c>MockHandTrackingProvider</c>)
+        /// can push data without needing a reference to a specific <see cref="HandTrackingReceiver"/>
+        /// instance. If multiple receivers exist (e.g., during scene transitions with
+        /// <c>DontDestroyOnLoad</c>), they will share the same queue. This is by-design:
+        /// only one consumer should drain the queue at any given time.
+        /// </para>
         /// </summary>
         private static readonly ConcurrentQueue<HandData> _handDataQueue = new ConcurrentQueue<HandData>();
 

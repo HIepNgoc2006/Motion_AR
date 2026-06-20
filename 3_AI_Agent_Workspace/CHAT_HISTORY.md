@@ -267,6 +267,16 @@
   9. `ObjectPooler.cs` — Đổi `async void` thành `async UniTaskVoid` (P1) để handle exceptions tốt hơn.
 - Kết quả chạy build bằng `dotnet build`: **Build thành công, 0 lỗi, giảm xuống chỉ còn 1 warning** (harmless).
 
+## Phiên 15 — 2026-06-20 (Remaining Code Review Fixes)
+- Sửa **5 vấn đề còn lại (P0/P1/P2)** từ Code Review trên 4 files:
+  1. `SessionManager.cs` — Sửa `ElapsedTime` dùng `Time.deltaTime` tích lũy để tính thời gian đúng khi pause.
+  2. `SessionManager.cs` — Capture `_mistakeCount` thành biến cục bộ trước async save để tránh race condition.
+  3. `ObjectPooler.cs` — Implement đầy đủ `ReturnAll()` bằng `HashSet<GameObject>` tracking, thay thế no-op stub.
+  4. `SQLiteConnector.cs` — Re-throw exception trong `InitializeAsync` để caller có thể xử lý lỗi init.
+  5. `HandTrackingReceiver.cs` — Thêm documentation giải thích tại sao `_handDataQueue` là static (design decision).
+- Build: **0 errors, 1 warning** (harmless CS0219).
+- **Tổng bugs fixed lũy kế**: 30
+
 ---
 
 > **GHI CHÚ**: File này sẽ được cập nhật tự động sau mỗi phiên trao đổi với AI.

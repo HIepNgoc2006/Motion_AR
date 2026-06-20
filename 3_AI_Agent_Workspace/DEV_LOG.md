@@ -609,3 +609,26 @@ Full code review theo quy trình 5-axis (correctness, readability, architecture,
 - **Race conditions fixed**: 1 (SessionManager async save)
 - **Performance improved**: GestureDetector hot-path (zero GC per frame)
 
+---
+
+## PHIÊN 15 — 2026-06-20 (Remaining Code Review Fixes)
+
+### 📌 Yêu cầu
+Tiếp tục triển khai dự án — sửa các lỗi P1/P2 còn lại từ Code Review Phiên 14.
+
+### ✏️ Bug Fixes Applied
+
+| # | Severity | File | Issue | Fix |
+|---|---|---|---|---|
+| 1 | **P1** | `SessionManager.cs` | `ElapsedTime` dùng `Time.time` diff — không xử lý pause (`Time.timeScale=0`) | Đổi sang `_accumulatedTime` tích lũy qua `Time.deltaTime` trong `Update()` |
+| 2 | **P0** | `SessionManager.cs` | `_mistakeCount` truy cập trực tiếp trong async save — race condition | Capture thành biến cục bộ `mistakes` trước khi gọi fire-and-forget save |
+| 3 | **P1** | `ObjectPooler.cs` | `ReturnAll()` là no-op, chỉ log warning | Implement đầy đủ với `HashSet<GameObject>` tracking active objects |
+| 4 | **P1** | `SQLiteConnector.cs` | `InitializeAsync` nuốt exception — caller không biết init fail | Thêm `throw;` re-throw sau khi log error |
+| 5 | **P2** | `HandTrackingReceiver.cs` | `_handDataQueue` static không có giải thích tại sao | Thêm XML documentation giải thích design decision |
+
+### 📊 Kết quả
+- **Build**: 0 errors, 1 warning (unchanged — CS0219 in ZAxisCalibrator)
+- **Bugs fixed**: 5 issues across 4 files
+- **Tổng bugs fixed lũy kế**: 30
+- **Phiên làm việc**: 15
+

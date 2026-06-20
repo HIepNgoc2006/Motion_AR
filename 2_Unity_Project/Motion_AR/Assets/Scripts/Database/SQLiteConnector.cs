@@ -153,6 +153,7 @@ namespace MotionAR.Database
             catch (Exception ex)
             {
                 Debug.LogError($"[SQLiteConnector] Failed to initialize database: {ex}");
+                throw; // Re-throw so callers can detect and handle the failure.
             }
         }
 

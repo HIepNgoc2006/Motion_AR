@@ -28,7 +28,7 @@ namespace MotionAR.Core
         private LessonData _currentLesson;
         private int _currentStepIndex;
         private int _mistakeCount;
-        private float _sessionStartTime;
+        private float _accumulatedTime;
         private string _currentUserId;
         private bool _isLessonActive;
 
@@ -66,10 +66,12 @@ namespace MotionAR.Core
         }
 
         /// <summary>
-        /// Wall-clock seconds elapsed since the current lesson started.
+        /// Seconds elapsed since the current lesson started, excluding paused time.
+        /// Accumulated via <c>Time.deltaTime</c> each frame so that pausing
+        /// (<c>Time.timeScale = 0</c>) automatically freezes the counter.
         /// Returns <c>0</c> when no lesson is active.
         /// </summary>
-        public float ElapsedTime => _isLessonActive ? Time.time - _sessionStartTime : 0f;
+        public float ElapsedTime => _isLessonActive ? _accumulatedTime : 0f;
 
         // ────────────────────────── Events ──────────────────────────
 
@@ -110,6 +112,14 @@ namespace MotionAR.Core
             DontDestroyOnLoad(gameObject);
         }
 
+        private void Update()
+        {
+            if (_isLessonActive)
+            {
+                _accumulatedTime += Time.deltaTime;
+            }
+        }
+
         // ────────────────────────── Public Methods ──────────────────────────
 
         /// <summary>
@@ -142,7 +152,7 @@ namespace MotionAR.Core
             _currentLesson = lesson;
             _currentStepIndex = 0;
             _mistakeCount = 0;
-            _sessionStartTime = Time.time;
+            _accumulatedTime = 0f;
             _isLessonActive = true;
 
             OnLessonStarted?.Invoke(lesson);
@@ -213,6 +223,7 @@ namespace MotionAR.Core
             _currentLesson = null;
             _currentStepIndex = 0;
             _mistakeCount = 0;
+            _accumulatedTime = 0f;
             _isLessonActive = false;
         }
 
@@ -228,17 +239,18 @@ namespace MotionAR.Core
             _isLessonActive = false;
 
             float score = Mathf.Max(0f, 100f - _mistakeCount * 10f);
-            float totalTime = Time.time - _sessionStartTime;
+            float totalTime = _accumulatedTime;
 
-            // Capture values before async save to avoid race with ResetSession().
+            // Capture ALL mutable values before async save to avoid race with ResetSession().
             string userId = _currentUserId;
             string lessonId = _currentLesson?.lessonID ?? string.Empty;
+            int mistakes = _mistakeCount;
 
             OnLessonCompleted?.Invoke(score);
             Debug.Log($"[SessionManager] Lesson complete! Score: {score}, Time: {totalTime:F1}s");
 
             // Fire-and-forget async database persistence (non-blocking).
-            SaveSessionToDatabase(userId, lessonId, score, totalTime).Forget();
+            SaveSessionToDatabase(userId, lessonId, score, totalTime, mistakes).Forget();
         }
 
         /// <summary>
@@ -250,7 +262,7 @@ namespace MotionAR.Core
         /// <param name="score">Final calculated score (0–100).</param>
         /// <param name="totalTime">Total elapsed time in seconds.</param>
         private async UniTaskVoid SaveSessionToDatabase(
-            string userId, string lessonId, float score, float totalTime)
+            string userId, string lessonId, float score, float totalTime, int mistakes)
         {
             try
             {
@@ -259,7 +271,7 @@ namespace MotionAR.Core
                     userId,
                     lessonId,
                     totalTime,
-                    _mistakeCount,
+                    mistakes,
                     score,
                     destroyCancellationToken
                 );

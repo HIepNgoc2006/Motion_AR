@@ -49,6 +49,13 @@ namespace MotionAR.Core
         private readonly Dictionary<string, int> _activeCount =
             new Dictionary<string, int>();
 
+        /// <summary>
+        /// Tracks currently active (in-use) GameObjects per pool tag.
+        /// Used by <see cref="ReturnAll"/> to collect and return all active objects.
+        /// </summary>
+        private readonly Dictionary<string, HashSet<GameObject>> _activeObjects =
+            new Dictionary<string, HashSet<GameObject>>();
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -92,6 +99,7 @@ namespace MotionAR.Core
                 _pools[config.tag] = queue;
                 _configLookup[config.tag] = config;
                 _activeCount[config.tag] = 0;
+                _activeObjects[config.tag] = new HashSet<GameObject>();
 
                 Debug.Log($"[ObjectPooler] Pool '{config.tag}' initialized with {config.initialSize} objects.");
             }
@@ -146,6 +154,7 @@ namespace MotionAR.Core
             obj.SetActive(true);
 
             _activeCount[tag]++;
+            _activeObjects[tag].Add(obj);
             return obj;
         }
 
@@ -176,6 +185,11 @@ namespace MotionAR.Core
             obj.SetActive(false);
             queue.Enqueue(obj);
 
+            if (_activeObjects.TryGetValue(tag, out var activeSet))
+            {
+                activeSet.Remove(obj);
+            }
+
             if (_activeCount.ContainsKey(tag) && _activeCount[tag] > 0)
             {
                 _activeCount[tag]--;
@@ -201,13 +215,36 @@ namespace MotionAR.Core
         }
 
         /// <summary>
-        /// Returns all active objects of a specific pool.
+        /// Returns all currently active objects of a specific pool back to the pool.
+        /// Each object is deactivated and re-enqueued.
         /// </summary>
+        /// <param name="tag">Pool tag to return all objects for.</param>
         public void ReturnAll(string tag)
         {
-            // This requires tracking active objects; for simplicity,
-            // we log a message. Full tracking would need a HashSet<GameObject>.
-            Debug.Log($"[ObjectPooler] ReturnAll for '{tag}' — use Return() per-object for now.");
+            if (!_activeObjects.TryGetValue(tag, out var activeSet) || activeSet.Count == 0)
+            {
+                return;
+            }
+
+            if (!_pools.TryGetValue(tag, out var queue))
+            {
+                return;
+            }
+
+            // Copy to array to avoid modifying the set while iterating.
+            var snapshot = new GameObject[activeSet.Count];
+            activeSet.CopyTo(snapshot);
+
+            foreach (var obj in snapshot)
+            {
+                if (obj == null) continue;
+
+                obj.SetActive(false);
+                queue.Enqueue(obj);
+            }
+
+            activeSet.Clear();
+            _activeCount[tag] = 0;
         }
 
         /// <summary>
@@ -264,6 +301,7 @@ namespace MotionAR.Core
             _pools[tag] = queue;
             _configLookup[tag] = config;
             _activeCount[tag] = 0;
+            _activeObjects[tag] = new HashSet<GameObject>();
         }
 
         // ─────────────────── Private ───────────────────
