@@ -65,11 +65,14 @@ namespace MotionAR.Interaction
         private const int TOTAL_FEATURES = LANDMARKS_COUNT * FEATURES_PER_LANDMARK;
 
         private PinchState _currentPinchState;
-        private readonly List<float[]> _slidingWindow = new List<float[]>(WINDOW_SIZE);
+        private readonly Queue<float[]> _slidingWindow = new Queue<float[]>(WINDOW_SIZE);
         private Worker _sentisWorker;
         private float _cooldownTimer;
         private bool _isModelLoaded;
         private int _frameCounter;
+
+        // Pre-allocated buffer to avoid per-frame GC allocations.
+        private readonly float[] _featuresBuffer = new float[TOTAL_FEATURES];
 
         // ── StandardScaler normalization params (exported from Python) ──
         private float[] _scalerMean;
@@ -228,25 +231,28 @@ namespace MotionAR.Interaction
         /// </summary>
         private void ProcessDynamicGesture(HandData data)
         {
-            // Flatten 21 landmarks × 3 floats = float[63].
-            float[] features = new float[TOTAL_FEATURES];
+            // Flatten 21 landmarks × 3 floats = float[63] into reusable buffer.
             for (int i = 0; i < LANDMARKS_COUNT; i++)
             {
                 int offset = i * FEATURES_PER_LANDMARK;
-                features[offset] = data.Landmarks[i].x;
-                features[offset + 1] = data.Landmarks[i].y;
-                features[offset + 2] = data.Landmarks[i].z;
+                _featuresBuffer[offset] = data.Landmarks[i].x;
+                _featuresBuffer[offset + 1] = data.Landmarks[i].y;
+                _featuresBuffer[offset + 2] = data.Landmarks[i].z;
             }
 
             // Apply StandardScaler normalization: (x - mean) / scale.
             // This must match the preprocessing used during model training.
-            NormalizeFeatures(features);
+            NormalizeFeatures(_featuresBuffer);
 
-            // Add to sliding window (FIFO).
-            _slidingWindow.Add(features);
-            if (_slidingWindow.Count > WINDOW_SIZE)
+            // Copy to a new array for the window (buffer is reused each frame).
+            float[] frameCopy = new float[TOTAL_FEATURES];
+            System.Array.Copy(_featuresBuffer, frameCopy, TOTAL_FEATURES);
+
+            // Add to sliding window (FIFO queue — O(1) enqueue/dequeue).
+            _slidingWindow.Enqueue(frameCopy);
+            while (_slidingWindow.Count > WINDOW_SIZE)
             {
-                _slidingWindow.RemoveAt(0);
+                _slidingWindow.Dequeue();
             }
 
             // Only run inference when the buffer is full and cooldown has elapsed.
@@ -275,9 +281,11 @@ namespace MotionAR.Interaction
         {
             // Build flat array from the sliding window: shape [1, 15, 63].
             float[] tensorData = new float[WINDOW_SIZE * TOTAL_FEATURES];
-            for (int frame = 0; frame < WINDOW_SIZE; frame++)
+            int frameIdx = 0;
+            foreach (float[] frameData in _slidingWindow)
             {
-                Array.Copy(_slidingWindow[frame], 0, tensorData, frame * TOTAL_FEATURES, TOTAL_FEATURES);
+                System.Array.Copy(frameData, 0, tensorData, frameIdx * TOTAL_FEATURES, TOTAL_FEATURES);
+                frameIdx++;
             }
 
             Tensor<float> inputTensor = null;

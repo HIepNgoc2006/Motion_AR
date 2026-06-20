@@ -230,11 +230,15 @@ namespace MotionAR.Core
             float score = Mathf.Max(0f, 100f - _mistakeCount * 10f);
             float totalTime = Time.time - _sessionStartTime;
 
+            // Capture values before async save to avoid race with ResetSession().
+            string userId = _currentUserId;
+            string lessonId = _currentLesson?.lessonID ?? string.Empty;
+
             OnLessonCompleted?.Invoke(score);
             Debug.Log($"[SessionManager] Lesson complete! Score: {score}, Time: {totalTime:F1}s");
 
             // Fire-and-forget async database persistence (non-blocking).
-            SaveSessionToDatabase(score, totalTime).Forget();
+            SaveSessionToDatabase(userId, lessonId, score, totalTime).Forget();
         }
 
         /// <summary>
@@ -245,14 +249,15 @@ namespace MotionAR.Core
         /// </summary>
         /// <param name="score">Final calculated score (0–100).</param>
         /// <param name="totalTime">Total elapsed time in seconds.</param>
-        private async UniTaskVoid SaveSessionToDatabase(float score, float totalTime)
+        private async UniTaskVoid SaveSessionToDatabase(
+            string userId, string lessonId, float score, float totalTime)
         {
             try
             {
                 SQLiteConnector db = SQLiteConnector.Instance;
                 await db.InsertSessionAsync(
-                    _currentUserId,
-                    _currentLesson.lessonID,
+                    userId,
+                    lessonId,
                     totalTime,
                     _mistakeCount,
                     score,

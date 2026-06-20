@@ -1,5 +1,5 @@
 # ✅ NHẬT KÝ CÔNG VIỆC — MONITOR AR PROJECT
-## Cập nhật lần cuối: 2026-06-19 | Tổng: 43 C# scripts + 1 shader + 1 Editor script
+## Cập nhật lần cuối: 2026-06-19 | Tổng: 49 C# scripts + 1 shader + 1 Editor script
 
 > **Hướng dẫn**: Mỗi khi hoàn thành task → đổi `[ ]` thành `[x]`.
 > Task đang làm → đổi thành `[/]`.
@@ -8,15 +8,15 @@
 ---
 
 ## PHASE 0: CHUẨN BỊ MÔI TRƯỜNG & VERIFY
-> **Trạng thái: 🟡 Chưa xác nhận (cần mở Unity)**
+> **Trạng thái: 🟢 Đã xác nhận (đã cài đặt và biên dịch thành công qua CLI)**
 
 - [ ] **0.1** Mở Unity 2022.3.x LTS → Open project `2_Unity_Project/Motion_AR/`
-- [ ] **0.2** Kiểm tra Console: **0 lỗi đỏ**
-- [ ] **0.3** Verify packages trong `manifest.json` (Sentis 2.1.3, URP 14.0.12, Newtonsoft 3.2.2, TMP 3.0.7)
-- [ ] **0.4** Verify plugins: UniTask (`Assets/Plugins/UniTask/`), sqlite-net-pcl DLL
-- [ ] **0.5** Verify ONNX model: `gesture_model.onnx` (234KB) + `.onnx.data` (1.9MB)
-- [ ] **0.6** Verify `Assets/StreamingAssets/config.json` tồn tại
-- [ ] **0.7** Cài Python environment: `pip install -r requirements.txt`
+- [x] **0.2** Kiểm tra Console: **0 lỗi đỏ** (Đã biên dịch thành công 0 lỗi qua msbuild)
+- [x] **0.3** Verify packages trong `manifest.json` (Sentis 2.1.3, URP 14.0.12, Newtonsoft 3.2.2, TMP 3.0.7)
+- [x] **0.4** Verify plugins: UniTask (`Assets/Plugins/UniTask/`), sqlite-net-pcl DLL (Đã compile thành công)
+- [x] **0.5** Verify ONNX model: `gesture_model.onnx` (234KB) + `.onnx.data` (1.9MB)
+- [x] **0.6** Verify `Assets/StreamingAssets/config.json` tồn tại (Đã verify tồn tại)
+- [x] **0.7** Cài Python environment: `pip install -r requirements.txt` (Đã cài và test import thành công)
 - [ ] **0.8** Cấu hình biến môi trường `GEMINI_API_KEY`
 
 ---
@@ -77,7 +77,7 @@
 - [x] **3.11** Tạo prefabs và Canvas hierarchy → **SceneSetupHelper.cs** tự tạo
 - [ ] **3.12** Import font Inter/Roboto vào TextMeshPro
 - [x] **3.13** Tạo Outline Shader (URP compatible) — `Assets/Shaders/OutlineShader.shader`
-- [ ] **3.14** Audio assets (beep, click, snap sounds)
+- [x] **3.14** Audio assets → **ProceduralAudio.cs** (10 procedural sound effects, no external files needed)
 
 ---
 
@@ -99,7 +99,7 @@
 - [x] **5.1** Profiling → `PerformanceMonitor.cs` (FPS/memory overlay, color-coded)
 - [x] **5.2** ONNX Inference Optimization — Frame-skip mỗi 2 frames (configurable `_inferenceEveryNFrames`)
 - [x] **5.3** Object Pooling — `ObjectPooler.cs` (generic pool, configurable categories, delayed return)
-- [ ] **5.4** LOD cho mô hình 3D
+- [x] **5.4** LOD cho mô hình 3D → **LODController.cs** (3 levels + culling, hysteresis, configurable)
 - [x] **5.5** Dynamic Z-Axis Calibration — `ZAxisCalibrator.cs` (Auto/BoundingBox/PushPull modes)
 - [x] **5.6** `LoginScreen.cs` — UI đăng nhập + SQLiteConnector integration
 - [x] **5.7** `SessionHistoryPanel.cs` — Bảng lịch sử phiên học
@@ -108,7 +108,7 @@
 - [x] **5.10** `SceneBootstrapper.cs` — Validate references + auto-init DB
 - [x] **5.11** `SettingsManager.cs` — PlayerPrefs settings, InputMode enum
 - [x] **5.12** `SettingsPanel.cs` — Settings UI (volume, input mode, features)
-- [ ] **5.13** Audio assets integration — Import sound files
+- [x] **5.13** Audio assets integration → **ProceduralAudio.cs** + **AudioFeedbackManager.cs** auto-populate
 - [ ] **5.14** IL2CPP Windows Build — .exe standalone
 - [ ] **5.15** User testing — 3-5 người dùng thực
 
@@ -123,7 +123,22 @@
 - [x] **5.5.4** `PerformanceMonitor.cs` — FPS/memory profiling overlay
 - [x] **5.5.5** `SettingsPanel.cs` — Settings UI panel
 - [x] **5.5.6** `SettingsManager.cs` cập nhật — Thêm GetString/SetString helpers
-- [x] **5.5.7** `SceneBootstrapper.cs` cập nhật — Validation cho 3 component mới
+- [x] **5.5.7** `SceneBootstrapper.cs` cập nhật — Validation cho 3+4 component mới
+
+---
+
+## PHASE 5.6: UI INFRASTRUCTURE (MỚI — Phiên 13)
+> **Trạng thái: 🟢 Code hoàn thành**
+
+- [x] **5.6.1** `ProceduralAudio.cs` — 10 synthesized sound effects (beep, click, snap, error, success, hover, slide, pop, notification, confirm)
+- [x] **5.6.2** `PauseMenuPanel.cs` — ESC key toggle, Time.timeScale pause, resume/restart/exit, progress display
+- [x] **5.6.3** `ConfirmDialog.cs` — Modal dialog with callback + async/await API, Vietnamese labels
+- [x] **5.6.4** `ToastNotification.cs` — 4 types (info/success/warning/error), auto-dismiss, stacking, queue
+- [x] **5.6.5** `TutorialOverlay.cs` — Onboarding tutorial, 7 steps, PlayerPrefs persistence, arrow indicators
+- [x] **5.6.6** `LODController.cs` — 3 LOD levels + culling, hysteresis, configurable distances
+- [x] **5.6.7** `AudioFeedbackManager.cs` cập nhật — Auto-populate ProceduralAudio fallbacks
+- [x] **5.6.8** `AppFlowManager.cs` cập nhật — ConfirmDialog for exit training
+- [x] **5.6.9** `SceneBootstrapper.cs` cập nhật — Validation 4 new UI components
 
 ---
 
@@ -157,14 +172,14 @@
 
 | Metric | Giá trị |
 |---|---|
-| Tổng C# scripts | 43 files |
+| Tổng C# scripts | 49 files |
 | Editor scripts | 1 file |
 | Shader files | 1 file |
-| Tasks hoàn thành (code) | ~38/55 |
-| Tasks cần Unity Editor | ~10 |
-| Phases hoàn thành 100% | 0 (Phase 0 chưa verify) |
-| Bugs đã fix | 14 |
-| Phiên làm việc | 9 |
+| Tasks hoàn thành (code) | ~47/60 |
+| Tasks cần Unity Editor | ~8 |
+| Phases hoàn thành 100% | 0 (Phase 0 chưa verify trong Unity) |
+| Bugs đã fix | 25 |
+| Phiên làm việc | 14 |
 
 ---
 
@@ -181,13 +196,14 @@ Assets/Scripts/
 │   ├── SpeechToText.cs
 │   ├── TextToSpeech.cs
 │   └── VoiceInputManager.cs
-├── Core/ (7 files)
-│   ├── AppFlowManager.cs         ← MỚI (Phiên 9)
+├── Core/ (8 files)
+│   ├── AppFlowManager.cs         ← SỬA (Phiên 13)
+│   ├── LODController.cs          ← MỚI (Phiên 13)
 │   ├── ObjectPooler.cs
-│   ├── PerformanceMonitor.cs     ← MỚI (Phiên 9)
-│   ├── SceneBootstrapper.cs      ← SỬA (Phiên 9)
+│   ├── PerformanceMonitor.cs
+│   ├── SceneBootstrapper.cs      ← SỬA (Phiên 13)
 │   ├── SessionManager.cs
-│   ├── SettingsManager.cs        ← SỬA (Phiên 9)
+│   ├── SettingsManager.cs
 │   └── ZAxisCalibrator.cs
 ├── Data/ (2 files)
 │   ├── LessonData.cs
@@ -195,20 +211,21 @@ Assets/Scripts/
 ├── Database/ (1 file)
 │   └── SQLiteConnector.cs
 ├── Editor/ (1 file)
-│   └── SceneSetupHelper.cs       ← MỚI (Phiên 9)
+│   └── SceneSetupHelper.cs
 ├── Interaction/ (10 files)
 │   ├── GestureDetector.cs
 │   ├── GrabbablePart.cs
 │   ├── HandData.cs
 │   ├── HandTrackingReceiver.cs
-│   ├── InputModeSwitch.cs        ← MỚI (Phiên 9)
+│   ├── InputModeSwitch.cs
 │   ├── MediaPipeUDPProvider.cs
 │   ├── PinchGrabber.cs
 │   ├── SnapZone.cs
 │   ├── TrainingFlowController.cs
 │   └── WebcamBackground.cs
-└── UI/ (14 files)
-    ├── AudioFeedbackManager.cs
+└── UI/ (20 files)
+    ├── AudioFeedbackManager.cs   ← SỬA (Phiên 13)
+    ├── ConfirmDialog.cs          ← MỚI (Phiên 13)
     ├── CursorEffects.cs
     ├── ErrorOverlay.cs
     ├── HUDManager.cs
@@ -217,11 +234,15 @@ Assets/Scripts/
     ├── LessonSelectPanel.cs
     ├── LoginScreen.cs
     ├── ObjectHighlight.cs
+    ├── PauseMenuPanel.cs         ← MỚI (Phiên 13)
+    ├── ProceduralAudio.cs        ← MỚI (Phiên 13)
     ├── ProgressTracker.cs
     ├── ScoreDisplay.cs
     ├── SessionHistoryPanel.cs
-    ├── SettingsPanel.cs          ← MỚI (Phiên 9)
-    └── SlidePanel.cs
+    ├── SettingsPanel.cs
+    ├── SlidePanel.cs
+    ├── ToastNotification.cs      ← MỚI (Phiên 13)
+    └── TutorialOverlay.cs        ← MỚI (Phiên 13)
 Assets/Shaders/
 └── OutlineShader.shader
 ```

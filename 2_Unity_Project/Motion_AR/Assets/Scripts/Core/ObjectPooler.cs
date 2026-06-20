@@ -186,7 +186,7 @@ namespace MotionAR.Core
         /// Returns an object to the pool after a delay (in seconds).
         /// Useful for particle effects, damage numbers, etc.
         /// </summary>
-        public async void ReturnDelayed(string tag, GameObject obj, float delay)
+        public async Cysharp.Threading.Tasks.UniTaskVoid ReturnDelayed(string tag, GameObject obj, float delay)
         {
             if (obj == null) return;
 

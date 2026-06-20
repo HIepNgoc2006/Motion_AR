@@ -59,6 +59,12 @@ namespace MotionAR.Core
         [Header("Input")]
         [SerializeField] private InputModeSwitch _inputModeSwitch;
 
+        [Header("UI Extended")]
+        [SerializeField] private PauseMenuPanel _pauseMenuPanel;
+        [SerializeField] private ConfirmDialog _confirmDialog;
+        [SerializeField] private ToastNotification _toastNotification;
+        [SerializeField] private TutorialOverlay _tutorialOverlay;
+
         private void Awake()
         {
             ValidateReferences();
@@ -120,6 +126,10 @@ namespace MotionAR.Core
             warnings += CheckOptional("AppFlowManager", _appFlowManager);
             warnings += CheckOptional("PerformanceMonitor", _performanceMonitor);
             warnings += CheckOptional("InputModeSwitch", _inputModeSwitch);
+            warnings += CheckOptional("PauseMenuPanel", _pauseMenuPanel);
+            warnings += CheckOptional("ConfirmDialog", _confirmDialog);
+            warnings += CheckOptional("ToastNotification", _toastNotification);
+            warnings += CheckOptional("TutorialOverlay", _tutorialOverlay);
 
             // Validate data
             ValidateStreamingAssets();

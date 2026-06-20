@@ -1,10 +1,40 @@
+# =============================================================================
+# Requirements — Dynamic Spatial Hand Gesture Recognition
+# =============================================================================
+# Cài đặt: pip install -r requirements.txt
+# Môi trường: d:\WORKSAPCE\Monitor_AR\.venv
+# =============================================================================
+
+# ── Deep Learning Framework ──
+# Cài PyTorch CPU: pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 torch
 torchvision
 torchaudio
-mediapipe
-opencv-python
+
+# ── Khoa học dữ liệu ──
+numpy
 pandas
 scikit-learn
+scipy
+
+# ── Trực quan hóa ──
 matplotlib
 seaborn
+
+# ── Computer Vision & Hand Tracking ──
+opencv-python
+mediapipe
+
+# ── Web App ──
+streamlit
+plotly
+
+# ── OS Control (Windows HCI) ──
+pyautogui
+pycaw
+comtypes
+
+# ── Tiện ích ──
+tqdm
 jupyterlab
+watchdog

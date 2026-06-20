@@ -53,6 +53,25 @@ namespace MotionAR.UI
             _audioSource.playOnAwake = false;
         }
 
+        private void Start()
+        {
+            // Auto-populate missing clips with procedural audio fallbacks.
+            // This allows the app to have audio without external asset files,
+            // while still permitting manual overrides via the Inspector.
+            if (_pinchSound == null) _pinchSound = ProceduralAudio.Click;
+            if (_releaseSound == null) _releaseSound = ProceduralAudio.Pop;
+            if (_snapSuccessSound == null) _snapSuccessSound = ProceduralAudio.Snap;
+            if (_snapErrorSound == null) _snapErrorSound = ProceduralAudio.Error;
+            if (_stepAdvanceSound == null) _stepAdvanceSound = ProceduralAudio.Success;
+            if (_lessonCompleteSound == null) _lessonCompleteSound = ProceduralAudio.Notification;
+            if (_mistakeSound == null) _mistakeSound = ProceduralAudio.Error;
+            if (_buttonHoverSound == null) _buttonHoverSound = ProceduralAudio.HoverTick;
+            if (_buttonActivateSound == null) _buttonActivateSound = ProceduralAudio.Beep;
+            if (_panelSlideSound == null) _panelSlideSound = ProceduralAudio.Slide;
+
+            Debug.Log("[AudioFeedbackManager] Audio clips ready (procedural fallbacks applied).");
+        }
+
         private void OnEnable()
         {
             if (SessionManager.Instance != null)

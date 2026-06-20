@@ -1,6 +1,8 @@
 using UnityEngine;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using MotionAR.Data;
+using MotionAR.UI;
 
 namespace MotionAR.Core
 {
@@ -67,6 +69,9 @@ namespace MotionAR.Core
         [SerializeField]
         [Tooltip("Duration of fade transitions in seconds.")]
         private float _fadeDuration = 0.3f;
+
+        private bool _isTransitioning;
+        private CancellationTokenSource _transitionCts;
 
         // ────────────────────── Events ──────────────────────
 
@@ -176,12 +181,8 @@ namespace MotionAR.Core
                     break;
 
                 case AppPhase.Training:
-                    // Abort training → back to lesson select.
-                    if (SessionManager.Instance != null)
-                    {
-                        SessionManager.Instance.ResetSession();
-                    }
-                    TransitionTo(AppPhase.LessonSelect);
+                    // Show confirmation before aborting training.
+                    ConfirmExitTrainingAsync().Forget();
                     break;
 
                 case AppPhase.LessonSelect:
@@ -213,38 +214,67 @@ namespace MotionAR.Core
         /// </summary>
         private async UniTaskVoid FadeTransitionAsync(AppPhase targetPhase)
         {
-            // Fade to black.
-            if (_transitionOverlay != null)
-            {
-                _transitionOverlay.gameObject.SetActive(true);
-                _transitionOverlay.blocksRaycasts = true;
+            // Cancel any in-flight transition to prevent stacking.
+            _transitionCts?.Cancel();
+            _transitionCts?.Dispose();
+            _transitionCts = new CancellationTokenSource();
+            var ct = _transitionCts.Token;
 
-                float elapsed = 0f;
-                while (elapsed < _fadeDuration)
+            if (_isTransitioning) return;
+            _isTransitioning = true;
+
+            try
+            {
+                // Fade to black.
+                if (_transitionOverlay != null)
                 {
-                    elapsed += Time.unscaledDeltaTime;
-                    _transitionOverlay.alpha = Mathf.Clamp01(elapsed / _fadeDuration);
-                    await UniTask.Yield(PlayerLoopTiming.Update);
+                    _transitionOverlay.gameObject.SetActive(true);
+                    _transitionOverlay.blocksRaycasts = true;
+
+                    float elapsed = 0f;
+                    while (elapsed < _fadeDuration)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        elapsed += Time.unscaledDeltaTime;
+                        _transitionOverlay.alpha = Mathf.Clamp01(elapsed / _fadeDuration);
+                        await UniTask.Yield(PlayerLoopTiming.Update);
+                    }
+                    _transitionOverlay.alpha = 1f;
                 }
-                _transitionOverlay.alpha = 1f;
+
+                // Apply the phase change while screen is black.
+                ApplyPhase(targetPhase);
+
+                // Fade back in.
+                if (_transitionOverlay != null)
+                {
+                    float elapsed = 0f;
+                    while (elapsed < _fadeDuration)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        elapsed += Time.unscaledDeltaTime;
+                        _transitionOverlay.alpha = 1f - Mathf.Clamp01(elapsed / _fadeDuration);
+                        await UniTask.Yield(PlayerLoopTiming.Update);
+                    }
+                    _transitionOverlay.alpha = 0f;
+                    _transitionOverlay.blocksRaycasts = false;
+                    _transitionOverlay.gameObject.SetActive(false);
+                }
             }
-
-            // Apply the phase change while screen is black.
-            ApplyPhase(targetPhase);
-
-            // Fade back in.
-            if (_transitionOverlay != null)
+            catch (System.OperationCanceledException)
             {
-                float elapsed = 0f;
-                while (elapsed < _fadeDuration)
+                // Transition was cancelled by a newer transition — apply immediately.
+                ApplyPhase(targetPhase);
+                if (_transitionOverlay != null)
                 {
-                    elapsed += Time.unscaledDeltaTime;
-                    _transitionOverlay.alpha = 1f - Mathf.Clamp01(elapsed / _fadeDuration);
-                    await UniTask.Yield(PlayerLoopTiming.Update);
+                    _transitionOverlay.alpha = 0f;
+                    _transitionOverlay.blocksRaycasts = false;
+                    _transitionOverlay.gameObject.SetActive(false);
                 }
-                _transitionOverlay.alpha = 0f;
-                _transitionOverlay.blocksRaycasts = false;
-                _transitionOverlay.gameObject.SetActive(false);
+            }
+            finally
+            {
+                _isTransitioning = false;
             }
         }
 
@@ -306,6 +336,30 @@ namespace MotionAR.Core
             {
                 go.SetActive(active);
             }
+        }
+
+        /// <summary>
+        /// Shows a confirmation dialog before exiting training.
+        /// Prevents accidental progress loss.
+        /// </summary>
+        private async UniTaskVoid ConfirmExitTrainingAsync()
+        {
+            if (ConfirmDialog.Instance != null)
+            {
+                bool confirmed = await ConfirmDialog.Instance.ShowAsync(
+                    "Thoát bài học?",
+                    "Tiến độ hiện tại sẽ không được lưu.\nBạn có chắc chắn muốn thoát?",
+                    "Thoát",
+                    "Tiếp tục học");
+
+                if (!confirmed) return;
+            }
+
+            if (SessionManager.Instance != null)
+            {
+                SessionManager.Instance.ResetSession();
+            }
+            TransitionTo(AppPhase.LessonSelect);
         }
     }
 

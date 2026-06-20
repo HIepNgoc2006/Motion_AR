@@ -167,7 +167,7 @@ namespace MotionAR.AI
             request.SetRequestHeader("Content-Type", "application/json");
             request.timeout = timeoutSeconds;
 
-            var timeoutCts = new CancellationTokenSource();
+            using var timeoutCts = new CancellationTokenSource();
             timeoutCts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
 
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);

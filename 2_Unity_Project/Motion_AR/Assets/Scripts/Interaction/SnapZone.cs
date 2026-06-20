@@ -208,8 +208,21 @@ namespace MotionAR.Interaction
                 return;
             }
 
-            Material originalMaterial = renderer.material;
-            renderer.material = _errorMaterial;
+            // Use MaterialPropertyBlock to avoid creating material clones (prevents memory leak).
+            var mpb = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(mpb);
+            Color originalColor = mpb.GetColor("_BaseColor");
+            bool hadColor = originalColor != default;
+
+            // If no color was set in the block, read from shared material.
+            if (!hadColor && renderer.sharedMaterial != null)
+            {
+                originalColor = renderer.sharedMaterial.color;
+            }
+
+            mpb.SetColor("_BaseColor", new Color(1f, 0.1f, 0.1f, 1f)); // Error red
+            mpb.SetColor("_Color", new Color(1f, 0.1f, 0.1f, 1f));     // Legacy fallback
+            renderer.SetPropertyBlock(mpb);
 
             try
             {
@@ -222,12 +235,14 @@ namespace MotionAR.Interaction
             }
             catch (OperationCanceledException)
             {
-                // Flash was cancelled — still restore the original material if possible.
+                // Flash was cancelled — still restore the original color if possible.
             }
 
             if (renderer != null)
             {
-                renderer.material = originalMaterial;
+                mpb.SetColor("_BaseColor", originalColor);
+                mpb.SetColor("_Color", originalColor);
+                renderer.SetPropertyBlock(mpb);
             }
         }
 

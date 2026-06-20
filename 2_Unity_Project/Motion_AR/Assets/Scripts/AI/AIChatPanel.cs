@@ -81,6 +81,11 @@ namespace MotionAR.AI
             CancelQuery();
         }
 
+        private void OnDestroy()
+        {
+            CancelQuery();
+        }
+
         /// <summary>
         /// Submits a text question to the AI tutor.
         /// </summary>
