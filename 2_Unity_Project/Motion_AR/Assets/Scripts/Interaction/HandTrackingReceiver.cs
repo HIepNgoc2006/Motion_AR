@@ -47,6 +47,14 @@ namespace MotionAR.Interaction
         [Tooltip("Main camera reference. Falls back to Camera.main if not assigned.")]
         private Camera _mainCamera;
 
+        [SerializeField]
+        [Tooltip("Offset applied to landmark x/y before mapping to screen. Default 0.2 maps [-0.2, 0.2] input range to [0, 0.4].")]
+        private float _landmarkCoordOffset = 0.2f;
+
+        [SerializeField]
+        [Tooltip("Total coordinate range after offset. Default 0.4 maps the [0, 0.4] range to [0, 1] normalized screen coords.")]
+        private float _landmarkCoordRange = 0.4f;
+
         private Vector3 _smoothedPosition;
         private float _lastReceivedTime;
         private bool _isTrackingActive;
@@ -144,8 +152,8 @@ namespace MotionAR.Interaction
             Vector3 indexTip = data.Landmarks[8];
 
             // Convert landmark to screen-space pixel coordinates.
-            float screenX = (indexTip.x + 0.2f) / 0.4f * Screen.width;
-            float screenY = (indexTip.y + 0.2f) / 0.4f * Screen.height;
+            float screenX = (indexTip.x + _landmarkCoordOffset) / _landmarkCoordRange * Screen.width;
+            float screenY = (indexTip.y + _landmarkCoordOffset) / _landmarkCoordRange * Screen.height;
             Vector3 screenPoint = new Vector3(
                 Mathf.Clamp(screenX, 0f, Screen.width),
                 Mathf.Clamp(screenY, 0f, Screen.height),
