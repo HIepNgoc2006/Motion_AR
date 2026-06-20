@@ -265,18 +265,14 @@ namespace MotionAR.Core
         /// </summary>
         private void ProcessPushPullCalibration(float z)
         {
-            bool updated = false;
-
             if (z < _rawZMin)
             {
                 _rawZMin = z;
-                updated = true;
             }
 
             if (z > _rawZMax)
             {
                 _rawZMax = z;
-                updated = true;
             }
 
             float range = _rawZMax - _rawZMin;
