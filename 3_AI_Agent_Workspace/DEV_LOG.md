@@ -657,3 +657,25 @@ Hoàn thành các task còn dang dở: Task 1.5 (LessonData mẫu) và Code Revi
 - **Task 1.5**: ✅ Hoàn thành (via Editor menu auto-generation)
 - **Code Review P1 #9 (No Tests)**: ✅ Đã giải quyết
 
+---
+
+## PHIÊN 16 — 2026-06-20 (Setup & Deployment Documentation)
+
+### 📌 Yêu cầu
+Hướng dẫn người dùng thiết lập (setup), các bước chạy và triển khai (deployment) trên Unity.
+
+### 🧠 Quá trình suy nghĩ
+- Xem xét kỹ quy trình trong skill `using-agent-skills` (bao gồm Surface Assumptions, Manage Confusion, push back, enforce simplicity, scope discipline, và verification).
+- Dự án đã hoàn thành hầu hết các module cốt lõi, nhưng chưa có một hướng dẫn chi tiết từ A-Z bằng tiếng Việt cho nhà phát triển/người dùng đầu cuối về cách thiết lập scene và môi trường.
+- Viết tài liệu `setup_and_deployment_guide.md` chi tiết để giải quyết yêu cầu này.
+- Cập nhật các tài liệu liên quan để người dùng dễ dàng tìm thấy hướng dẫn mới.
+
+### ✏️ Thay đổi code
+- [NEW] `3_AI_Agent_Workspace/Documentation/setup_and_deployment_guide.md`: Tài liệu hướng dẫn thiết lập hệ thống từ đầu bằng tiếng Việt.
+- [NEW] `C:\Users\hiep\.gemini\antigravity-ide\brain\be5e46e6-db14-4db8-a949-6d2971632914\setup_and_deployment_guide.md`: Bản sao Artifact của tài liệu để xem trực quan trên UI.
+- [MODIFY] `README.md`: Thêm link tài liệu hướng dẫn vào phần "Tài liệu liên quan".
+- [MODIFY] `3_AI_Agent_Workspace/README.md`: Thêm link tài liệu hướng dẫn vào phần "Tài liệu kỹ thuật".
+
+### 📊 Kết quả
+- Hướng dẫn cài đặt và triển khai hoàn thiện và trực quan.
+- Không phát sinh code thay đổi không cần thiết ở phần runtime.

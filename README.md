@@ -535,6 +535,7 @@ auto:     Commit tự động bởi auto_commit.py
 | Tài liệu | Mô tả |
 |---|---|
 | [TECHNICAL_REFERENCE.md](3_AI_Agent_Workspace/TECHNICAL_REFERENCE.md) | API Reference — classes, methods, events |
+| [setup_and_deployment_guide.md](3_AI_Agent_Workspace/Documentation/setup_and_deployment_guide.md) | Hướng dẫn Setup & Triển khai dự án trên Unity (Mới) |
 | [Motion AR.md](3_AI_Agent_Workspace/Motion%20AR.md) | Master Plan V3.1 — đặc tả đầy đủ |
 | [implementation_plan.md](implementation_plan.md) | Roadmap chi tiết 6 phases |
 | [1_AI_Model_Training/README.md](1_AI_Model_Training/README.md) | Tài liệu riêng cho pipeline AI |

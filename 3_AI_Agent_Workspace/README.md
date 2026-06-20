@@ -293,6 +293,7 @@ Sửa `Assets/StreamingAssets/config.json`:
 |---|---|
 | [Motion AR.md](Motion%20AR.md) | Đặc tả Master Plan V3.1 — tài liệu gốc đầy đủ |
 | [Documentation/](Documentation/) | Kế hoạch triển khai chi tiết và walkthrough |
+| [setup_and_deployment_guide.md](Documentation/setup_and_deployment_guide.md) | Hướng dẫn Setup & Triển khai dự án trên Unity (Mới) |
 | [TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md) | Tham khảo kỹ thuật API — classes, methods, events |
 
 ---

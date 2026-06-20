@@ -289,6 +289,26 @@
 
 ---
 
+## Phiên 16 — 2026-06-20 14:51 | Hướng dẫn Setup & Triển khai Unity
+
+**👤 User:** /using-agent-skills hướng dẫn tôi cách setup, các bước và cách triển khai trên unity
+
+**🤖 AI:**
+- Đọc và tuân thủ các quy tắc trong skill `using-agent-skills`.
+- Tạo tài liệu hướng dẫn đầy đủ bằng tiếng Việt: [setup_and_deployment_guide.md](file:///d:/WORKSAPCE/Monitor_AR/3_AI_Agent_Workspace/Documentation/setup_and_deployment_guide.md) (và bản sao Artifact) hướng dẫn chi tiết cách thiết lập dự án.
+- Tài liệu bao gồm:
+  1. Yêu cầu hệ thống và môi trường Unity (v2022.3 LTS), Python, Webcam.
+  2. Cách thiết lập Python environment, cài đặt dependencies và chạy `mediapipe_server.py`.
+  3. Cách cấu hình Gemini API Key qua biến môi trường hoặc `config.json`.
+  4. Cách sử dụng các menu Editor tự động để khởi tạo Scene (`Setup Training Scene`) và sinh giáo án mẫu (`Create Sample Lessons`).
+  5. Hướng dẫn chạy kiểm thử Mock Mode (dùng chuột) và Real Hand Tracking Mode (dùng webcam).
+  6. Các bước build game thành file `.exe` standalone chạy trên Windows.
+- Cập nhật liên kết tài liệu hướng dẫn trong `README.md` chính của dự án và `3_AI_Agent_Workspace/README.md`.
+- **Files changed**: setup_and_deployment_guide.md (NEW), README.md (MODIFIED), 3_AI_Agent_Workspace/README.md (MODIFIED)
+- **Kết quả**: Cung cấp hướng dẫn đầy đủ để thiết lập và triển khai dự án Unity/Python.
+
+---
+
 > **GHI CHÚ**: File này sẽ được cập nhật tự động sau mỗi phiên trao đổi với AI.
 > Nếu lịch sử quá dài, các phiên cũ sẽ được tóm tắt (archive) vào `CHAT_HISTORY_ARCHIVE.md`.
 
